@@ -31854,14 +31854,15 @@ const github = __nccwpck_require__(3228)
         // Processing
         const octokit = github.getOctokit(config.token)
         const sha = config.sha || github.context.sha
-        core.info(`Processing sha: \u001b[33;1m${sha}`)
+        core.info(`⌛ Processing: \u001b[32;1m${sha}`)
 
         // const response = await octokit.rest.git.getCommit({
         //     ...github.context.repo,
         //     commit_sha: sha,
         // })
+
         const url = `/repos/${github.context.repo.owner}/${github.context.repo.repo}/commits/${sha}`
-        console.debug('url:', url)
+        core.debug(`url: ${url}`)
         const options = {
             ...github.context.repo,
             ref: sha,
@@ -31875,16 +31876,21 @@ const github = __nccwpck_require__(3228)
         console.log(response.data)
         core.endGroup() // Commit Data
 
+        // Results
         const results = config.selector
             .split('.')
             .reduce((acc, key) => acc?.[key], response.data)
-        console.log('results:', results)
+        if (config.selector) {
+            console.log('results:', results)
+        }
 
         const result =
             typeof results === 'object'
                 ? JSON.stringify(results)
                 : results.toString()
-        console.log('result:', result)
+        if (config.selector) {
+            console.log('result:', result)
+        }
 
         // Outputs
         core.info('📩 Setting Outputs')
@@ -31934,10 +31940,9 @@ async function addSummary(config, sha, commit, result) {
     }
 
     delete commit.files
-    core.startGroup('Debug: commit')
-    console.log(commit)
-    core.endGroup() // Debug: commit
-
+    // core.startGroup('Debug: commit')
+    // console.log(commit)
+    // core.endGroup() // Debug: commit
     core.summary.addRaw('<details><summary>Commit</summary>')
     core.summary.addRaw(
         '\n\nNote: `files` key removed to improve rendering. Full output is available in the job logs.\n\n'
