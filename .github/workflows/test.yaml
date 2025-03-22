@@ -5,14 +5,8 @@ on:
   #schedule:
   #  - cron: "18 18 * * 1,3,5"
   push:
-    branches: ["**"]
-    paths:
-      - "dist/**"
-      - "src/**"
-      - "package*.json"
-      - "requirements*.txt"
-      - ".github/workflows/test.yaml"
-      - "action.yml"
+    branches: ["master"]
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
