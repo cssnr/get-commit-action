@@ -26,7 +26,7 @@ const github = require('@actions/github')
         // Processing
         const octokit = github.getOctokit(config.token)
         const sha = config.sha || github.context.sha
-        core.info(`⌛ Processing: \u001b[32;1m${sha}`)
+        core.info(`Processing: \u001b[32;1m${sha}`)
 
         // const response = await octokit.rest.git.getCommit({
         //     ...github.context.repo,
@@ -52,16 +52,17 @@ const github = require('@actions/github')
         const results = config.selector
             .split('.')
             .reduce((acc, key) => acc?.[key], response.data)
-        if (config.selector) {
-            console.log('results:', results)
-        }
 
         const result =
             typeof results === 'object'
                 ? JSON.stringify(results)
                 : results.toString()
         if (config.selector) {
-            console.log('result:', result)
+            core.startGroup('Results')
+            console.log('raw results:\n', results)
+            console.log('string result:\n', result)
+            core.endGroup() // Commit Data
+            core.warning(`No result for selector: ${config.selector}`)
         }
 
         // Outputs
