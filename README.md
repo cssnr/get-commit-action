@@ -41,7 +41,50 @@ Get Commit and Parse Details such as the head Commit Message for a Pull Request 
 
 ---
 
-Coming Soon...
+sha: [3b1a2525425924fc6a8aec772e7290770b1d9d79](https://github.com/cssnr/get-commit-action/commit/3b1a2525425924fc6a8aec772e7290770b1d9d79)
+
+<details open><summary>Result</summary><pre lang="text"><code>Example commit message</code></pre>
+</details>
+<details><summary>Commit</summary><pre lang="json"><code>{
+  "sha": "3b1a2525425924fc6a8aec772e7290770b1d9d79",
+  "node_id": "C_kwDOONDk4toAKDNiMWEyNTI1NDI1OTI0ZmM2YThhZWM3NzJlNzI5MDc3MGIxZDlkNzk",
+  "url": "https://api.github.com/repos/cssnr/get-commit-action/git/commits/3b1a2525425924fc6a8aec772e7290770b1d9d79",
+  "html_url": "https://github.com/cssnr/get-commit-action/commit/3b1a2525425924fc6a8aec772e7290770b1d9d79",
+  "author": {
+    "name": "Shane",
+    "email": "6071159+smashedr@users.noreply.github.com",
+    "date": "2025-03-22T21:15:04Z"
+  },
+  "committer": {
+    "name": "Shane",
+    "email": "6071159+smashedr@users.noreply.github.com",
+    "date": "2025-03-22T21:15:04Z"
+  },
+  "tree": {
+    "sha": "233fa1ab1901899a12d8bec605dae67c7970f807",
+    "url": "https://api.github.com/repos/cssnr/get-commit-action/git/trees/233fa1ab1901899a12d8bec605dae67c7970f807"
+  },
+  "message": "Example commit message",
+  "parents": [
+    {
+      "sha": "51cdac1118622fd9826cdfda0955aaa569524f8a",
+      "url": "https://api.github.com/repos/cssnr/get-commit-action/git/commits/51cdac1118622fd9826cdfda0955aaa569524f8a",
+      "html_url": "https://github.com/cssnr/get-commit-action/commit/51cdac1118622fd9826cdfda0955aaa569524f8a"
+    }
+  ],
+  "verification": {
+    "verified": true,
+    "reason": "valid",
+    "signature": "-----BEGIN PGP SIGNATURE-----\n\niHUEABYKAB0WIQRXgKNZZbHv52xw4573HsvCBq6NtQUCZ98oWAAKCRD3HsvCBq6N\ntcYCAP9oCe3uBkaz33L8wZhUDW7iF9sXIibxfCeXs4LUxpIO3AD/dB2vQIuQMHbr\nZ45xy85OM87OLRM6B21OT2Cl9UhJvg8=\n=uM4E\n-----END PGP SIGNATURE-----",
+    "payload": "tree 233fa1ab1901899a12d8bec605dae67c7970f807\nparent 51cdac1118622fd9826cdfda0955aaa569524f8a\nauthor Shane <6071159+smashedr@users.noreply.github.com> 1742678104 -0700\ncommitter Shane <6071159+smashedr@users.noreply.github.com> 1742678104 -0700\n\nUupdate result\n",
+    "verified_at": "2025-03-22T21:14:42Z"
+  }
+}</code></pre>
+</details>
+<details><summary>Config</summary><pre lang="yaml"><code>sha: ""
+selector: "message"
+summary: true</code></pre>
+</details>
 
 ---
 
