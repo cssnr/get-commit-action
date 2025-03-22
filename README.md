@@ -33,9 +33,14 @@ Get Commit and Parse Details such as the head Commit Message for a Pull Request 
 | Input    | Req. | Default&nbsp;Value | Input&nbsp;Description |
 | :------- | :--: | :----------------- | :--------------------- |
 | sha      |  -   | `GITHUB_SHA`       | SHA of Commit          |
-| selector |  -   | -                  | Object Selector        |
+| selector |  -   | -                  | Object Selector \*     |
 | summary  |  -   | `true`             | Add Summary to Job     |
 | token    |  -   | `github.token`     | Only for PAT [^1]      |
+
+**selector:** JavaScript Object selector in dot notation.
+Examples: `message` or `committer.name`
+
+**summary:** Write the results to the Job Summary. Set to `false` to disable.
 
 <details><summary>👀 View Example Job Summary</summary>
 
@@ -109,6 +114,8 @@ Get the head commit for a pull_request event.
     sha: ${{ github.event.pull_request.head.sha }}
 ```
 
+See the [Examples](#Examples) for more.
+
 ### Permissions
 
 This action requires the following permissions:
@@ -164,11 +171,6 @@ Permissions documentation for [Workflows](https://docs.github.com/en/actions/wri
   run: |
     echo "message: ${RESULT}"
 ```
-
-</details>
-<details><summary>Additional Example</summary>
-
-Coming Soon...
 
 </details>
 
