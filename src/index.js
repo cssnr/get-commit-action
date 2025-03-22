@@ -32,9 +32,15 @@ const github = require('@actions/github')
         console.log(response.data)
         core.endGroup() // Commit Data
 
-        const result = config.selector
+        const results = config.selector
             .split('.')
             .reduce((acc, key) => acc?.[key], response.data)
+        console.log('results:', results)
+
+        const result =
+            typeof results === 'object'
+                ? JSON.stringify(results)
+                : results.toString()
         console.log('result:', result)
 
         // Outputs

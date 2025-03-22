@@ -31860,9 +31860,15 @@ const github = __nccwpck_require__(3228)
         console.log(response.data)
         core.endGroup() // Commit Data
 
-        const result = config.selector
+        const results = config.selector
             .split('.')
             .reduce((acc, key) => acc?.[key], response.data)
+        console.log('results:', results)
+
+        const result =
+            typeof results === 'object'
+                ? JSON.stringify(results)
+                : results.toString()
         console.log('result:', result)
 
         // Outputs
