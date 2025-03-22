@@ -98,7 +98,9 @@ async function addSummary(config, sha, commit, result) {
     core.summary.addRaw(`sha: [${sha}](${url})\n\n`)
 
     if (result) {
-        core.summary.addRaw('<details open><summary>Result</summary>')
+        core.summary.addRaw(
+            '<details open><summary>Result: ${config.selector}</summary>'
+        )
         core.summary.addCodeBlock(result, 'text')
         core.summary.addRaw('</details>\n')
     }
