@@ -41,7 +41,7 @@ jobs:
         uses: ./
         with:
           selector: "message"
-          sha: "dd49c0cc254760111a78f2c739efcedd567e2bf2"
+          #sha: "dd49c0cc254760111a78f2c739efcedd567e2bf2"
 
       - name: "Verify Outputs"
         env:
