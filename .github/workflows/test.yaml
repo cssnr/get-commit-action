@@ -2,8 +2,8 @@ name: "Test"
 
 on:
   workflow_dispatch:
-  #schedule:
-  #  - cron: "18 18 * * 1,3,5"
+  schedule:
+    - cron: "18 18 * * 1,3,5"
   push:
     branches: ["master"]
   pull_request:
@@ -30,20 +30,29 @@ jobs:
         run: |
           cat "${GITHUB_EVENT_PATH}"
 
-      - name: "Test Local Action"
+      - name: "Test Non-Pull"
+        if: ${{ github.event_name != 'pull_request' }}
         id: test
         uses: ./
         with:
-          selector: "message"
+          selector: "commit.message"
+          #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2
 
-      - name: "Verify Outputs"
-        if: ${{ !github.event.act }}
+      - name: "Test Pull"
+        if: ${{ github.event_name == 'pull_request' }}
+        id: pull
+        uses: ./
+        with:
+          selector: "commit.message"
+          sha: ${{ github.event.pull_request.head.sha }}
+
+      - name: "Verify"
         env:
-          COMMIT: ${{ steps.test.outputs.commit }}
-          RESULT: ${{ steps.test.outputs.result }}
+          COMMIT: ${{ steps.test.outputs.commit || steps.pull.outputs.commit }}
+          RESULT: ${{ steps.test.outputs.result || steps.pull.outputs.result }}
         run: |
-          echo "sha: '${{ steps.test.outputs.sha }}'"
-          if [ -z '${{ steps.test.outputs.sha }}' ];then
+          echo "sha: '${{ steps.test.outputs.sha || steps.pull.outputs.sha }}'"
+          if [ -z '${{ steps.test.outputs.sha || steps.pull.outputs.sha }}' ];then
             echo "No Output: sha"
             exit 1
           fi

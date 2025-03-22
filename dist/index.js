@@ -31834,6 +31834,10 @@ const github = __nccwpck_require__(3228)
         core.info(`🏳️ Starting Get Commit Action`)
 
         // Debug
+        core.startGroup('Debug')
+        console.log('github.context.repo:', github.context.repo)
+        core.endGroup() // Debug
+
         core.startGroup('Debug: github.context')
         console.log(github.context)
         core.endGroup() // Debug github.context
@@ -31850,26 +31854,47 @@ const github = __nccwpck_require__(3228)
         // Processing
         const octokit = github.getOctokit(config.token)
         const sha = config.sha || github.context.sha
-        core.info(`Processing sha: \u001b[33;1m${sha}`)
+        core.info(`sha: \u001b[32;1m${sha}`)
 
-        const response = await octokit.rest.git.getCommit({
+        // const response = await octokit.rest.git.getCommit({
+        //     ...github.context.repo,
+        //     commit_sha: sha,
+        // })
+
+        const url = `/repos/${github.context.repo.owner}/${github.context.repo.repo}/commits/${sha}`
+        core.debug(`url: ${url}`)
+        const options = {
             ...github.context.repo,
-            commit_sha: sha,
-        })
-        core.startGroup('Commit Data')
-        console.log(response.data)
-        core.endGroup() // Commit Data
+            ref: sha,
+            headers: {
+                'X-GitHub-Api-Version': '2022-11-28',
+            },
+        }
+        const response = await octokit.request(`GET ${url}`, options)
 
+        core.startGroup('Commit')
+        console.log(response.data)
+        core.endGroup() // Commit
+
+        // Results
         const results = config.selector
             .split('.')
             .reduce((acc, key) => acc?.[key], response.data)
-        console.log('results:', results)
 
         const result =
             typeof results === 'object'
                 ? JSON.stringify(results)
                 : results.toString()
-        console.log('result:', result)
+
+        if (config.selector) {
+            core.startGroup('Results')
+            console.log('raw results:\n', results)
+            console.log('string result:\n', result)
+            core.endGroup() // Commit Data
+            if (!result) {
+                core.warning(`No result for selector: ${config.selector}`)
+            }
+        }
 
         // Outputs
         core.info('📩 Setting Outputs')
@@ -31910,13 +31935,22 @@ async function addSummary(config, sha, commit, result) {
     const url = `https://github.com/${github.context.payload.repository.full_name}/commit/${sha}`
     core.summary.addRaw(`sha: [${sha}](${url})\n\n`)
 
-    if (result) {
-        core.summary.addRaw('<details open><summary>Result</summary>')
+    if (config.selector) {
+        core.summary.addRaw(
+            `<details open><summary>Result: ${config.selector}</summary>`
+        )
         core.summary.addCodeBlock(result, 'text')
         core.summary.addRaw('</details>\n')
     }
 
+    delete commit.files
+    // core.startGroup('Debug: commit')
+    // console.log(commit)
+    // core.endGroup() // Debug: commit
     core.summary.addRaw('<details><summary>Commit</summary>')
+    core.summary.addRaw(
+        '\n\nNote: `files` key removed to improve rendering. Full output is available in the job logs.\n\n'
+    )
     core.summary.addCodeBlock(JSON.stringify(commit, null, 2), 'json')
     core.summary.addRaw('</details>\n')
 
