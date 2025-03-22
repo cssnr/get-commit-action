@@ -31907,7 +31907,7 @@ const github = __nccwpck_require__(3228)
 async function addSummary(config, sha, commit, result) {
     core.summary.addRaw('## Get Commit Action\n')
 
-    const url = `https://github.com/${github.context.payload.repository.full_name}/commit/8ee04d547c7f17a3ab88d13f2ce478f3560ac0c0`
+    const url = `https://github.com/${github.context.payload.repository.full_name}/commit/${sha}`
     core.summary.addRaw(`sha: [${sha}](${url})\n\n`)
 
     if (result) {
@@ -31917,7 +31917,7 @@ async function addSummary(config, sha, commit, result) {
     }
 
     core.summary.addRaw('<details><summary>Commit</summary>')
-    core.summary.addCodeBlock(JSON.stringify(commit), 'json')
+    core.summary.addCodeBlock(JSON.stringify(commit, null, 2), 'json')
     core.summary.addRaw('</details>\n')
 
     delete config.token
