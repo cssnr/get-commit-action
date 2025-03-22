@@ -31936,8 +31936,10 @@ async function addSummary(config, sha, commit, result) {
     console.log(commit)
     core.endGroup() // Debug: commit
 
-    core.summary.addRaw('<details><summary>Commit</summary>\n\n')
-    core.summary.addRaw('Note: `files` key removed to improve rendering.\n\n')
+    core.summary.addRaw('<details><summary>Commit</summary>')
+    core.summary.addRaw(
+        '\n\nNote: `files` key removed to improve rendering. Full output is available in the job logs.\n\n'
+    )
     core.summary.addCodeBlock(JSON.stringify(commit, null, 2), 'json')
     core.summary.addRaw('</details>\n')
 
