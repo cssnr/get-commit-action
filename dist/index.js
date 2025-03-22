@@ -31931,6 +31931,7 @@ async function addSummary(config, sha, commit, result) {
         core.summary.addRaw('</details>\n')
     }
 
+    delete commit.files?.patch
     core.summary.addRaw('<details><summary>Commit</summary>')
     core.summary.addCodeBlock(JSON.stringify(commit, null, 2), 'json')
     core.summary.addRaw('</details>\n')
