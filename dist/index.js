@@ -31938,7 +31938,7 @@ async function addSummary(config, sha, commit, result) {
  */
 function getConfig() {
     return {
-        sha: core.getInput('sha', { required: true }),
+        sha: core.getInput('sha'),
         selector: core.getInput('selector'),
         summary: core.getBooleanInput('summary'),
         token: core.getInput('token', { required: true }),
