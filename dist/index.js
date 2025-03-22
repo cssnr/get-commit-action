@@ -31931,8 +31931,13 @@ async function addSummary(config, sha, commit, result) {
         core.summary.addRaw('</details>\n')
     }
 
-    delete commit.files?.patch
-    core.summary.addRaw('<details><summary>Commit</summary>')
+    delete commit.files
+    core.startGroup('Debug: commit')
+    console.log(commit)
+    core.endGroup() // Debug: commit
+
+    core.summary.addRaw('<details><summary>Commit</summary>\n\n')
+    core.summary.addRaw('Note: `files` key removed to improve rendering.\n\n')
     core.summary.addCodeBlock(JSON.stringify(commit, null, 2), 'json')
     core.summary.addRaw('</details>\n')
 
