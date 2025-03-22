@@ -30,12 +30,21 @@ jobs:
         run: |
           cat "${GITHUB_EVENT_PATH}"
 
-      - name: "Test Local Action"
+      - name: "Test Non-Pull"
+        if: ${{ github.event_name != 'pull_request' }}
         id: test
         uses: ./
         with:
           selector: "commit.message"
           #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2
+
+      - name: "Test Local Action"
+        if: ${{ github.event_name == 'pull_request' }}
+        id: test
+        uses: ./
+        with:
+          selector: "commit.message"
+          sha: ${{ github.event.pull_request.head.sha }}
 
       - name: "Verify Outputs"
         if: ${{ !github.event.act }}
