@@ -19,7 +19,6 @@
 # Get Commit Action
 
 - [Inputs](#Inputs)
-  - [Permissions](#Permissions)
 - [Outputs](#Outputs)
 - [Examples](#Examples)
 - [Tags](#Tags)
@@ -53,13 +52,12 @@ This can be done with a simple `run:` step. This action simplifies making the re
 | :------- | :--: | :----------------- | :--------------------- |
 | sha      |  -   | `GITHUB_SHA`       | SHA of Commit          |
 | selector |  -   | -                  | Object Selector \*     |
-| summary  |  -   | `true`             | Add Summary to Job     |
-| token    |  -   | `github.token`     | Only for PAT [^1]      |
+| summary  |  -   | `true`             | Add Summary to Job \*  |
+| token    |  -   | `github.token`     | Only for PAT           |
 
-**selector:** JavaScript Object selector in dot notation.
-Examples: `message` or `committer.name`
+**selector:** JavaScript Object selector in dot notation. Examples: `message` or `committer.name`
 
-**summary:** Write the results to the Job Summary. Set to `false` to disable.
+**summary:** Write the results to the Job Summary. To disable set to: `false`
 
 <details><summary>👀 View Example Job Summary</summary>
 
@@ -127,24 +125,12 @@ Get the head commit for a pull_request event.
 ```yaml
 - name: 'Get Commit Action'
   id: commit
-  if: ${{ github.event_name == 'pull_request' }}
   uses: cssnr/get-commit-action@master
   with:
     sha: ${{ github.event.pull_request.head.sha }}
 ```
 
 See the [Examples](#Examples) for more.
-
-### Permissions
-
-This action requires the following permissions:
-
-```yaml
-permissions:
-  contents: write
-```
-
-Permissions documentation for [Workflows](https://docs.github.com/en/actions/writing-workflows/choosing-what-your-workflow-does/controlling-permissions-for-github_token) and [Actions](https://docs.github.com/en/actions/security-for-github-actions/security-guides/automatic-token-authentication).
 
 ## Outputs
 
@@ -169,6 +155,8 @@ Permissions documentation for [Workflows](https://docs.github.com/en/actions/wri
     echo "result: ${RESULT}"
 ```
 
+Note: due to the way `${{}}` expressions are evaluated, multi-line output gets executed in a run block.
+
 ## Examples
 
 💡 _Click on an example heading to expand or collapse the example._
@@ -182,7 +170,7 @@ Permissions documentation for [Workflows](https://docs.github.com/en/actions/wri
   uses: cssnr/get-commit-action@master
   with:
     sha: ${{ github.event.pull_request.head.sha }}
-    selector: 'message'
+    selector: 'commit.message'
 
 - name: 'Echo Output'
   env:

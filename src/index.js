@@ -6,6 +6,10 @@ const github = require('@actions/github')
         core.info(`🏳️ Starting Get Commit Action`)
 
         // Debug
+        core.startGroup('Debug')
+        console.log('github.context.repo:', github.context.repo)
+        core.endGroup() // Debug
+
         core.startGroup('Debug: github.context')
         console.log(github.context)
         core.endGroup() // Debug github.context
@@ -24,10 +28,21 @@ const github = require('@actions/github')
         const sha = config.sha || github.context.sha
         core.info(`Processing sha: \u001b[33;1m${sha}`)
 
-        const response = await octokit.rest.git.getCommit({
+        // const response = await octokit.rest.git.getCommit({
+        //     ...github.context.repo,
+        //     commit_sha: sha,
+        // })
+        const url = `/repos/${github.context.repo.owner}/${github.context.repo.repo}/commits/${sha}`
+        console.debug('url:', url)
+        const options = {
             ...github.context.repo,
-            commit_sha: sha,
-        })
+            ref: sha,
+            headers: {
+                'X-GitHub-Api-Version': '2022-11-28',
+            },
+        }
+        const response = await octokit.request(`GET ${url}`, options)
+
         core.startGroup('Commit Data')
         console.log(response.data)
         core.endGroup() // Commit Data

@@ -34,7 +34,8 @@ jobs:
         id: test
         uses: ./
         with:
-          selector: "message"
+          selector: "commit.message"
+          #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2
 
       - name: "Verify Outputs"
         if: ${{ !github.event.act }}
