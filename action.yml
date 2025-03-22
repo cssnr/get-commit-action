@@ -9,7 +9,6 @@ inputs:
   sha:
     description: "SHA here"
     required: false
-    default: "test"
   selector:
     description: "Object Selector"
     required: false
