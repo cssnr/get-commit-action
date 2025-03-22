@@ -27,7 +27,7 @@
 
 Get Commit and Parse Details such as the head Commit Message for a Pull Request event and more...
 
-This can be done with a simple `run:` step. This action simplifies making the request, parsing the response, and setting the output.
+This can be done with a simple `run:` step; however, this action simplifies making the request, parsing the response, and setting the output.
 
 <details><summary>View Native Alternative</summary>
 
@@ -41,10 +41,14 @@ This can be done with a simple `run:` step. This action simplifies making the re
     echo message=$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${REF}" \
       -H "Accept: application/vnd.github+json" \
       -H "X-GitHub-Api-Version: 2022-11-28" \
-      --jq '.commit') >> "${GITHUB_OUTPUT}"
+      --jq '.commit.message') >> "${GITHUB_OUTPUT}"
 ```
 
+Note: This uses the `--jq` option of the `gh` cli as a selector for the desired data.
+
 </details>
+
+See some [Examples](#Examples) of this action below...
 
 ## Inputs
 
@@ -55,7 +59,7 @@ This can be done with a simple `run:` step. This action simplifies making the re
 | summary  |  -   | `true`             | Add Summary to Job \*  |
 | token    |  -   | `github.token`     | Only for PAT           |
 
-**selector:** JavaScript Object selector in dot notation. Examples: `message` or `committer.name`
+**selector:** JavaScript Object selector in dot notation. Examples: `commit` or `commit.message`
 
 **summary:** Write the results to the Job Summary. To disable set to: `false`
 
@@ -335,6 +339,23 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 
 💡 _Click on an example heading to expand or collapse the example._
 
+<details open><summary>Get The Commit Message</summary>
+
+```yaml
+- name: 'Get Commit Action'
+  id: commit
+  uses: cssnr/get-commit-action@master
+  with:
+    selector: 'commit.message'
+
+- name: 'Echo Output'
+  env:
+    RESULT: ${{ steps.commit.outputs.result }}
+  run: |
+    echo "commit.message: ${RESULT}"
+```
+
+</details>
 <details open><summary>Get The head Commit Message for a PR</summary>
 
 ```yaml
@@ -350,7 +371,7 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
   env:
     RESULT: ${{ steps.commit.outputs.result }}
   run: |
-    echo "message: ${RESULT}"
+    echo "commit.message: ${RESULT}"
 ```
 
 </details>
@@ -358,6 +379,7 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 
 ```yaml
 - name: 'Get Commit Action'
+  if: ${{ github.event_name == 'pull_request' }}
   id: commit
   uses: cssnr/get-commit-action@master
   with:
