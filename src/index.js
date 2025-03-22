@@ -13,6 +13,8 @@ const github = require('@actions/github')
         // console.log(process.env)
         // core.endGroup() // Debug process.env
 
+        console.log(core.getInput('sha'))
+
         // Config
         const config = getConfig()
         core.startGroup('Config')
