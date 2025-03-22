@@ -5,13 +5,13 @@ const github = require('@actions/github')
     try {
         core.info(`🏳️ Starting Get Commit Action`)
 
-        // // Debug
-        // core.startGroup('Debug: github.context')
-        // console.log(github.context)
-        // core.endGroup() // Debug github.context
-        // core.startGroup('Debug: process.env')
-        // console.log(process.env)
-        // core.endGroup() // Debug process.env
+        // Debug
+        core.startGroup('Debug: github.context')
+        console.log(github.context)
+        core.endGroup() // Debug github.context
+        core.startGroup('Debug: process.env')
+        console.log(process.env)
+        core.endGroup() // Debug process.env
 
         // Config
         const config = getConfig()
@@ -19,17 +19,18 @@ const github = require('@actions/github')
         console.log(config)
         core.endGroup() // Config
 
-        // Variables
+        // Processing
         const octokit = github.getOctokit(config.token)
         const sha = config.sha || github.context.sha
         core.info(`Processing sha: \u001b[33;1m${sha}`)
 
-        // Processing
         const response = await octokit.rest.git.getCommit({
             ...github.context.repo,
             commit_sha: sha,
         })
-        console.log('commit:', response.data)
+        core.startGroup('Commit Data')
+        console.log(response.data)
+        core.endGroup() // Commit Data
 
         const result = config.selector
             .split('.')
