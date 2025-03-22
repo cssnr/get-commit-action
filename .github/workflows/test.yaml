@@ -39,7 +39,7 @@ jobs:
           #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2
 
       - name: "1: Verify Non-Pull"
-        if: ${{ !github.event.act }}
+        if: ${{ github.event_name != 'pull_request' }}
         env:
           COMMIT: ${{ steps.test.outputs.commit }}
           RESULT: ${{ steps.test.outputs.result }}
