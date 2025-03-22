@@ -31925,9 +31925,9 @@ async function addSummary(config, sha, commit, result) {
     const url = `https://github.com/${github.context.payload.repository.full_name}/commit/${sha}`
     core.summary.addRaw(`sha: [${sha}](${url})\n\n`)
 
-    if (result) {
+    if (config.selector) {
         core.summary.addRaw(
-            '<details open><summary>Result: ${config.selector}</summary>'
+            `<details open><summary>Result: ${config.selector}</summary>`
         )
         core.summary.addCodeBlock(result, 'text')
         core.summary.addRaw('</details>\n')
