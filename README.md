@@ -28,6 +28,25 @@
 
 Get Commit and Parse Details such as the head Commit Message for a Pull Request event and more...
 
+This can be done with a simple `run:` step. This action simplifies making the request, parsing the response, and setting the output.
+
+<details><summary>View Native Alternative</summary>
+
+```yaml
+- name: 'Get Commit Message'
+  id: commit
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    REF: ${{ github.event.pull_request.head.sha }}
+  run: |
+    echo message=$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${REF}" \
+      -H "Accept: application/vnd.github+json" \
+      -H "X-GitHub-Api-Version: 2022-11-28" \
+      --jq '.commit') >> "${GITHUB_OUTPUT}"
+```
+
+</details>
+
 ## Inputs
 
 | Input    | Req. | Default&nbsp;Value | Input&nbsp;Description |
