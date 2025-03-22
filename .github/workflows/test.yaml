@@ -30,7 +30,7 @@ jobs:
         run: |
           cat "${GITHUB_EVENT_PATH}"
 
-      - name: "Test Non-Pull"
+      - name: "1: Test Non-Pull"
         if: ${{ github.event_name != 'pull_request' }}
         id: test
         uses: ./
@@ -38,15 +38,7 @@ jobs:
           selector: "commit.message"
           #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2
 
-      - name: "Test Local Action"
-        if: ${{ github.event_name == 'pull_request' }}
-        id: test
-        uses: ./
-        with:
-          selector: "commit.message"
-          sha: ${{ github.event.pull_request.head.sha }}
-
-      - name: "Verify Outputs"
+      - name: "1: Verify Non-Pull"
         if: ${{ !github.event.act }}
         env:
           COMMIT: ${{ steps.test.outputs.commit }}
@@ -54,6 +46,36 @@ jobs:
         run: |
           echo "sha: '${{ steps.test.outputs.sha }}'"
           if [ -z '${{ steps.test.outputs.sha }}' ];then
+            echo "No Output: sha"
+            exit 1
+          fi
+          echo "commit: ${COMMIT}"
+          if [ -z "${COMMIT}" ];then
+            echo "No Output: commit"
+            exit 1
+          fi
+          echo "result: ${RESULT}"
+          if [ -z "${RESULT}" ];then
+            echo "No Output: result"
+            exit 1
+          fi
+
+      - name: "2: Test Pull"
+        if: ${{ github.event_name == 'pull_request' }}
+        id: pr
+        uses: ./
+        with:
+          selector: "commit.message"
+          sha: ${{ github.event.pull_request.head.sha }}
+
+      - name: "2: Verify Pull"
+        if: ${{ github.event_name == 'pull_request' }}
+        env:
+          COMMIT: ${{ steps.pr.outputs.commit }}
+          RESULT: ${{ steps.pr.outputs.result }}
+        run: |
+          echo "sha: '${{ steps.pr.outputs.sha }}'"
+          if [ -z '${{ steps.pr.outputs.sha }}' ];then
             echo "No Output: sha"
             exit 1
           fi
