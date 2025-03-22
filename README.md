@@ -7,7 +7,7 @@
 [![Workflow lint](https://img.shields.io/github/actions/workflow/status/cssnr/get-commit-action/lint.yaml?logo=github&label=lint)](https://github.com/cssnr/get-commit-action/actions/workflows/lint.yaml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=smashedr_get-commit-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=smashedr_get-commit-action)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/get-commit-action?logo=github&label=updated)](https://github.com/cssnr/get-commit-action/graphs/commit-activity)
-[![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/shaner/get-commit-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/shaner/get-commit-action)
+[![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/get-commit-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/get-commit-action)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/get-commit-action?logo=htmx)](https://github.com/cssnr/get-commit-action)
 [![GitHub repo size](https://img.shields.io/github/repo-size/cssnr/get-commit-action?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/get-commit-action)
 [![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/get-commit-action)](https://github.com/cssnr/get-commit-action/discussions)
