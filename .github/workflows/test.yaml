@@ -40,7 +40,7 @@ jobs:
         id: test
         uses: ./
         with:
-          selector: "message"
+          selector: "author"
           #sha: "dd49c0cc254760111a78f2c739efcedd567e2bf2"
 
       - name: "Verify Outputs"
