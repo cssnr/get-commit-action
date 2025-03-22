@@ -31833,13 +31833,13 @@ const github = __nccwpck_require__(3228)
     try {
         core.info(`🏳️ Starting Get Commit Action`)
 
-        // // Debug
-        // core.startGroup('Debug: github.context')
-        // console.log(github.context)
-        // core.endGroup() // Debug github.context
-        // core.startGroup('Debug: process.env')
-        // console.log(process.env)
-        // core.endGroup() // Debug process.env
+        // Debug
+        core.startGroup('Debug: github.context')
+        console.log(github.context)
+        core.endGroup() // Debug github.context
+        core.startGroup('Debug: process.env')
+        console.log(process.env)
+        core.endGroup() // Debug process.env
 
         // Config
         const config = getConfig()
@@ -31847,21 +31847,28 @@ const github = __nccwpck_require__(3228)
         console.log(config)
         core.endGroup() // Config
 
-        // Variables
+        // Processing
         const octokit = github.getOctokit(config.token)
         const sha = config.sha || github.context.sha
         core.info(`Processing sha: \u001b[33;1m${sha}`)
 
-        // Processing
         const response = await octokit.rest.git.getCommit({
             ...github.context.repo,
             commit_sha: sha,
         })
-        console.log('commit:', response.data)
+        core.startGroup('Commit Data')
+        console.log(response.data)
+        core.endGroup() // Commit Data
 
-        const result = config.selector
+        const results = config.selector
             .split('.')
             .reduce((acc, key) => acc?.[key], response.data)
+        console.log('results:', results)
+
+        const result =
+            typeof results === 'object'
+                ? JSON.stringify(results)
+                : results.toString()
         console.log('result:', result)
 
         // Outputs
@@ -31900,7 +31907,7 @@ const github = __nccwpck_require__(3228)
 async function addSummary(config, sha, commit, result) {
     core.summary.addRaw('## Get Commit Action\n')
 
-    const url = `https://github.com/${github.context.payload.repository.full_name}/commit/8ee04d547c7f17a3ab88d13f2ce478f3560ac0c0`
+    const url = `https://github.com/${github.context.payload.repository.full_name}/commit/${sha}`
     core.summary.addRaw(`sha: [${sha}](${url})\n\n`)
 
     if (result) {
@@ -31910,7 +31917,7 @@ async function addSummary(config, sha, commit, result) {
     }
 
     core.summary.addRaw('<details><summary>Commit</summary>')
-    core.summary.addCodeBlock(JSON.stringify(commit), 'json')
+    core.summary.addCodeBlock(JSON.stringify(commit, null, 2), 'json')
     core.summary.addRaw('</details>\n')
 
     delete config.token
@@ -31938,7 +31945,7 @@ async function addSummary(config, sha, commit, result) {
  */
 function getConfig() {
     return {
-        sha: core.getInput('sha', { required: true }),
+        sha: core.getInput('sha'),
         selector: core.getInput('selector'),
         summary: core.getBooleanInput('summary'),
         token: core.getInput('token', { required: true }),

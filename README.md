@@ -5,9 +5,9 @@
 [![Workflow Release](https://img.shields.io/github/actions/workflow/status/cssnr/get-commit-action/release.yaml?logo=github&label=release)](https://github.com/cssnr/get-commit-action/actions/workflows/release.yaml)
 [![Workflow Test](https://img.shields.io/github/actions/workflow/status/cssnr/get-commit-action/test.yaml?logo=github&label=test)](https://github.com/cssnr/get-commit-action/actions/workflows/test.yaml)
 [![Workflow lint](https://img.shields.io/github/actions/workflow/status/cssnr/get-commit-action/lint.yaml?logo=github&label=lint)](https://github.com/cssnr/get-commit-action/actions/workflows/lint.yaml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=smashedr_get-commit-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=smashedr_get-commit-action)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_get-commit-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_get-commit-action)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/get-commit-action?logo=github&label=updated)](https://github.com/cssnr/get-commit-action/graphs/commit-activity)
-[![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/shaner/get-commit-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/shaner/get-commit-action)
+[![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/get-commit-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/get-commit-action)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/get-commit-action?logo=htmx)](https://github.com/cssnr/get-commit-action)
 [![GitHub repo size](https://img.shields.io/github/repo-size/cssnr/get-commit-action?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/get-commit-action)
 [![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/get-commit-action)](https://github.com/cssnr/get-commit-action/discussions)
@@ -28,20 +28,87 @@
 
 Get Commit and Parse Details such as the head Commit Message for a Pull Request event and more...
 
+This can be done with a simple `run:` step. This action simplifies making the request, parsing the response, and setting the output.
+
+<details><summary>View Native Alternative</summary>
+
+```yaml
+- name: 'Get Commit Message'
+  id: commit
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    REF: ${{ github.event.pull_request.head.sha }}
+  run: |
+    echo message=$(gh api "/repos/${GITHUB_REPOSITORY}/commits/${REF}" \
+      -H "Accept: application/vnd.github+json" \
+      -H "X-GitHub-Api-Version: 2022-11-28" \
+      --jq '.commit') >> "${GITHUB_OUTPUT}"
+```
+
+</details>
+
 ## Inputs
 
 | Input    | Req. | Default&nbsp;Value | Input&nbsp;Description |
 | :------- | :--: | :----------------- | :--------------------- |
 | sha      |  -   | `GITHUB_SHA`       | SHA of Commit          |
-| selector |  -   | -                  | Object Selector        |
+| selector |  -   | -                  | Object Selector \*     |
 | summary  |  -   | `true`             | Add Summary to Job     |
 | token    |  -   | `github.token`     | Only for PAT [^1]      |
+
+**selector:** JavaScript Object selector in dot notation.
+Examples: `message` or `committer.name`
+
+**summary:** Write the results to the Job Summary. Set to `false` to disable.
 
 <details><summary>👀 View Example Job Summary</summary>
 
 ---
 
-Coming Soon...
+sha: [3b1a2525425924fc6a8aec772e7290770b1d9d79](https://github.com/cssnr/get-commit-action/commit/3b1a2525425924fc6a8aec772e7290770b1d9d79)
+
+<details open><summary>Result</summary><pre lang="text"><code>Example commit message</code></pre>
+</details>
+<details><summary>Commit</summary><pre lang="json"><code>{
+  "sha": "3b1a2525425924fc6a8aec772e7290770b1d9d79",
+  "node_id": "C_kwDOONDk4toAKDNiMWEyNTI1NDI1OTI0ZmM2YThhZWM3NzJlNzI5MDc3MGIxZDlkNzk",
+  "url": "https://api.github.com/repos/cssnr/get-commit-action/git/commits/3b1a2525425924fc6a8aec772e7290770b1d9d79",
+  "html_url": "https://github.com/cssnr/get-commit-action/commit/3b1a2525425924fc6a8aec772e7290770b1d9d79",
+  "author": {
+    "name": "Shane",
+    "email": "6071159+smashedr@users.noreply.github.com",
+    "date": "2025-03-22T21:15:04Z"
+  },
+  "committer": {
+    "name": "Shane",
+    "email": "6071159+smashedr@users.noreply.github.com",
+    "date": "2025-03-22T21:15:04Z"
+  },
+  "tree": {
+    "sha": "233fa1ab1901899a12d8bec605dae67c7970f807",
+    "url": "https://api.github.com/repos/cssnr/get-commit-action/git/trees/233fa1ab1901899a12d8bec605dae67c7970f807"
+  },
+  "message": "Example commit message",
+  "parents": [
+    {
+      "sha": "51cdac1118622fd9826cdfda0955aaa569524f8a",
+      "url": "https://api.github.com/repos/cssnr/get-commit-action/git/commits/51cdac1118622fd9826cdfda0955aaa569524f8a",
+      "html_url": "https://github.com/cssnr/get-commit-action/commit/51cdac1118622fd9826cdfda0955aaa569524f8a"
+    }
+  ],
+  "verification": {
+    "verified": true,
+    "reason": "valid",
+    "signature": "-----BEGIN PGP SIGNATURE-----\n\niHUEABYKAB0WIQRXgKNZZbHv52xw4573HsvCBq6NtQUCZ98oWAAKCRD3HsvCBq6N\ntcYCAP9oCe3uBkaz33L8wZhUDW7iF9sXIibxfCeXs4LUxpIO3AD/dB2vQIuQMHbr\nZ45xy85OM87OLRM6B21OT2Cl9UhJvg8=\n=uM4E\n-----END PGP SIGNATURE-----",
+    "payload": "tree 233fa1ab1901899a12d8bec605dae67c7970f807\nparent 51cdac1118622fd9826cdfda0955aaa569524f8a\nauthor Shane <6071159+smashedr@users.noreply.github.com> 1742678104 -0700\ncommitter Shane <6071159+smashedr@users.noreply.github.com> 1742678104 -0700\n\nUupdate result\n",
+    "verified_at": "2025-03-22T21:14:42Z"
+  }
+}</code></pre>
+</details>
+<details><summary>Config</summary><pre lang="yaml"><code>sha: ""
+selector: "message"
+summary: true</code></pre>
+</details>
 
 ---
 
@@ -65,6 +132,8 @@ Get the head commit for a pull_request event.
   with:
     sha: ${{ github.event.pull_request.head.sha }}
 ```
+
+See the [Examples](#Examples) for more.
 
 ### Permissions
 
@@ -121,11 +190,6 @@ Permissions documentation for [Workflows](https://docs.github.com/en/actions/wri
   run: |
     echo "message: ${RESULT}"
 ```
-
-</details>
-<details><summary>Additional Example</summary>
-
-Coming Soon...
 
 </details>
 

@@ -5,14 +5,8 @@ on:
   #schedule:
   #  - cron: "18 18 * * 1,3,5"
   push:
-    branches: ["**"]
-    paths:
-      - "dist/**"
-      - "src/**"
-      - "package*.json"
-      - "requirements*.txt"
-      - ".github/workflows/test.yaml"
-      - "action.yml"
+    branches: ["master"]
+  pull_request:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -41,9 +35,9 @@ jobs:
         uses: ./
         with:
           selector: "message"
-          sha: "dd49c0cc254760111a78f2c739efcedd567e2bf2"
 
       - name: "Verify Outputs"
+        if: ${{ !github.event.act }}
         env:
           COMMIT: ${{ steps.test.outputs.commit }}
           RESULT: ${{ steps.test.outputs.result }}
