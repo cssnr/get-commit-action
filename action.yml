@@ -1,0 +1,35 @@
+name: "Get Commit Action"
+description: "Get Commit and Parse Details such as the head Commit Message for a Pull Request event."
+author: "Shane"
+branding:
+  icon: "type"
+  color: "green"
+
+inputs:
+  sha:
+    description: "SHA here"
+    required: false
+    default: "test"
+  selector:
+    description: "Object Selector"
+    required: false
+  summary:
+    description: "Add Summary to Job"
+    required: false
+    default: "true"
+  token:
+    description: "GitHub Token"
+    required: false
+    default: ${{ github.token }}
+
+outputs:
+  sha:
+    description: "Commit SHA"
+  commit:
+    description: "Full Commit"
+  result:
+    description: "Parsed Result"
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
