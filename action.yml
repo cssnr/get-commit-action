@@ -2,8 +2,8 @@ name: "Get Commit Action"
 description: "Get Commit and Parse Details such as the head Commit Message for a Pull Request event."
 author: "Shane"
 branding:
-  icon: "type"
-  color: "green"
+  icon: "git-pull-request"
+  color: "white"
 
 inputs:
   sha:
