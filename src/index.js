@@ -17,15 +17,15 @@ const github = require('@actions/github')
         console.log(process.env)
         core.endGroup() // Debug process.env
 
-        // Config
-        const config = getConfig()
-        core.startGroup('Config')
-        console.log(config)
-        core.endGroup() // Config
+        // Inputs
+        const inputs = getInputs()
+        core.startGroup('Inputs')
+        console.log(inputs)
+        core.endGroup() // Inputs
 
         // Processing
-        const octokit = github.getOctokit(config.token)
-        const sha = config.sha || github.context.sha
+        const octokit = github.getOctokit(inputs.token)
+        const sha = inputs.sha || github.context.sha
         core.info(`sha: \u001b[32;1m${sha}`)
 
         // const response = await octokit.rest.git.getCommit({
@@ -49,22 +49,20 @@ const github = require('@actions/github')
         core.endGroup() // Commit
 
         // Results
-        const results = config.selector
+        const results = inputs.selector
             .split('.')
             .reduce((acc, key) => acc?.[key], response.data)
 
         const result =
-            typeof results === 'object'
-                ? JSON.stringify(results)
-                : results.toString()
+            typeof results === 'object' ? JSON.stringify(results) : results.toString()
 
-        if (config.selector) {
+        if (inputs.selector) {
             core.startGroup('Results')
             console.log('raw results:\n', results)
             console.log('string result:\n', result)
             core.endGroup() // Commit Data
             if (!result) {
-                core.warning(`No result for selector: ${config.selector}`)
+                core.warning(`No result for selector: ${inputs.selector}`)
             }
         }
 
@@ -75,10 +73,10 @@ const github = require('@actions/github')
         core.setOutput('result', result)
 
         // Summary
-        if (config.summary) {
+        if (inputs.summary) {
             core.info('📝 Writing Job Summary')
             try {
-                await addSummary(config, sha, response.data, result)
+                await addSummary(inputs, sha, response.data, result)
             } catch (e) {
                 console.log(e)
                 core.error(`Error writing Job Summary ${e.message}`)
@@ -95,22 +93,20 @@ const github = require('@actions/github')
 
 /**
  * Add Summary
- * @param {Config} config
+ * @param {Inputs} inputs
  * @param {String} sha
  * @param {Object} commit
  * @param {String} result
  * @return {Promise<void>}
  */
-async function addSummary(config, sha, commit, result) {
+async function addSummary(inputs, sha, commit, result) {
     core.summary.addRaw('## Get Commit Action\n')
 
     const url = `https://github.com/${github.context.payload.repository.full_name}/commit/${sha}`
     core.summary.addRaw(`sha: [${sha}](${url})\n\n`)
 
-    if (config.selector) {
-        core.summary.addRaw(
-            `<details open><summary>Result: ${config.selector}</summary>`
-        )
+    if (inputs.selector) {
+        core.summary.addRaw(`<details open><summary>Result: ${inputs.selector}</summary>`)
         core.summary.addCodeBlock(result, 'text')
         core.summary.addRaw('</details>\n')
     }
@@ -126,11 +122,11 @@ async function addSummary(config, sha, commit, result) {
     core.summary.addCodeBlock(JSON.stringify(commit, null, 2), 'json')
     core.summary.addRaw('</details>\n')
 
-    delete config.token
-    const yaml = Object.entries(config)
+    delete inputs.token
+    const yaml = Object.entries(inputs)
         .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
         .join('\n')
-    core.summary.addRaw('<details><summary>Config</summary>')
+    core.summary.addRaw('<details><summary>Inputs</summary>')
     core.summary.addCodeBlock(yaml, 'yaml')
     core.summary.addRaw('</details>\n')
 
@@ -141,15 +137,15 @@ async function addSummary(config, sha, commit, result) {
 }
 
 /**
- * Get Config
- * @typedef {Object} Config
+ * Get Inputs
+ * @typedef {Object} Inputs
  * @property {String} sha
  * @property {String} selector
  * @property {Boolean} summary
  * @property {String} token
- * @return {Config}
+ * @return {Inputs}
  */
-function getConfig() {
+function getInputs() {
     return {
         sha: core.getInput('sha'),
         selector: core.getInput('selector'),

@@ -1882,6 +1882,7 @@ class Context {
         this.action = process.env.GITHUB_ACTION;
         this.actor = process.env.GITHUB_ACTOR;
         this.job = process.env.GITHUB_JOB;
+        this.runAttempt = parseInt(process.env.GITHUB_RUN_ATTEMPT, 10);
         this.runNumber = parseInt(process.env.GITHUB_RUN_NUMBER, 10);
         this.runId = parseInt(process.env.GITHUB_RUN_ID, 10);
         this.apiUrl = (_a = process.env.GITHUB_API_URL) !== null && _a !== void 0 ? _a : `https://api.github.com`;
@@ -3569,13 +3570,28 @@ var import_graphql = __nccwpck_require__(7);
 var import_auth_token = __nccwpck_require__(7864);
 
 // pkg/dist-src/version.js
-var VERSION = "5.2.1";
+var VERSION = "5.2.2";
 
 // pkg/dist-src/index.js
 var noop = () => {
 };
 var consoleWarn = console.warn.bind(console);
 var consoleError = console.error.bind(console);
+function createLogger(logger = {}) {
+  if (typeof logger.debug !== "function") {
+    logger.debug = noop;
+  }
+  if (typeof logger.info !== "function") {
+    logger.info = noop;
+  }
+  if (typeof logger.warn !== "function") {
+    logger.warn = consoleWarn;
+  }
+  if (typeof logger.error !== "function") {
+    logger.error = consoleError;
+  }
+  return logger;
+}
 var userAgentTrail = `octokit-core.js/${VERSION} ${(0, import_universal_user_agent.getUserAgent)()}`;
 var Octokit = class {
   static {
@@ -3649,15 +3665,7 @@ var Octokit = class {
     }
     this.request = import_request.request.defaults(requestDefaults);
     this.graphql = (0, import_graphql.withCustomRequest)(this.request).defaults(requestDefaults);
-    this.log = Object.assign(
-      {
-        debug: noop,
-        info: noop,
-        warn: consoleWarn,
-        error: consoleError
-      },
-      options.log
-    );
+    this.log = createLogger(options.log);
     this.hook = hook;
     if (!options.authStrategy) {
       if (!options.auth) {
@@ -31845,15 +31853,15 @@ const github = __nccwpck_require__(3228)
         console.log(process.env)
         core.endGroup() // Debug process.env
 
-        // Config
-        const config = getConfig()
-        core.startGroup('Config')
-        console.log(config)
-        core.endGroup() // Config
+        // Inputs
+        const inputs = getInputs()
+        core.startGroup('Inputs')
+        console.log(inputs)
+        core.endGroup() // Inputs
 
         // Processing
-        const octokit = github.getOctokit(config.token)
-        const sha = config.sha || github.context.sha
+        const octokit = github.getOctokit(inputs.token)
+        const sha = inputs.sha || github.context.sha
         core.info(`sha: \u001b[32;1m${sha}`)
 
         // const response = await octokit.rest.git.getCommit({
@@ -31877,22 +31885,20 @@ const github = __nccwpck_require__(3228)
         core.endGroup() // Commit
 
         // Results
-        const results = config.selector
+        const results = inputs.selector
             .split('.')
             .reduce((acc, key) => acc?.[key], response.data)
 
         const result =
-            typeof results === 'object'
-                ? JSON.stringify(results)
-                : results.toString()
+            typeof results === 'object' ? JSON.stringify(results) : results.toString()
 
-        if (config.selector) {
+        if (inputs.selector) {
             core.startGroup('Results')
             console.log('raw results:\n', results)
             console.log('string result:\n', result)
             core.endGroup() // Commit Data
             if (!result) {
-                core.warning(`No result for selector: ${config.selector}`)
+                core.warning(`No result for selector: ${inputs.selector}`)
             }
         }
 
@@ -31903,10 +31909,10 @@ const github = __nccwpck_require__(3228)
         core.setOutput('result', result)
 
         // Summary
-        if (config.summary) {
+        if (inputs.summary) {
             core.info('📝 Writing Job Summary')
             try {
-                await addSummary(config, sha, response.data, result)
+                await addSummary(inputs, sha, response.data, result)
             } catch (e) {
                 console.log(e)
                 core.error(`Error writing Job Summary ${e.message}`)
@@ -31923,22 +31929,20 @@ const github = __nccwpck_require__(3228)
 
 /**
  * Add Summary
- * @param {Config} config
+ * @param {Inputs} inputs
  * @param {String} sha
  * @param {Object} commit
  * @param {String} result
  * @return {Promise<void>}
  */
-async function addSummary(config, sha, commit, result) {
+async function addSummary(inputs, sha, commit, result) {
     core.summary.addRaw('## Get Commit Action\n')
 
     const url = `https://github.com/${github.context.payload.repository.full_name}/commit/${sha}`
     core.summary.addRaw(`sha: [${sha}](${url})\n\n`)
 
-    if (config.selector) {
-        core.summary.addRaw(
-            `<details open><summary>Result: ${config.selector}</summary>`
-        )
+    if (inputs.selector) {
+        core.summary.addRaw(`<details open><summary>Result: ${inputs.selector}</summary>`)
         core.summary.addCodeBlock(result, 'text')
         core.summary.addRaw('</details>\n')
     }
@@ -31954,11 +31958,11 @@ async function addSummary(config, sha, commit, result) {
     core.summary.addCodeBlock(JSON.stringify(commit, null, 2), 'json')
     core.summary.addRaw('</details>\n')
 
-    delete config.token
-    const yaml = Object.entries(config)
+    delete inputs.token
+    const yaml = Object.entries(inputs)
         .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
         .join('\n')
-    core.summary.addRaw('<details><summary>Config</summary>')
+    core.summary.addRaw('<details><summary>Inputs</summary>')
     core.summary.addCodeBlock(yaml, 'yaml')
     core.summary.addRaw('</details>\n')
 
@@ -31969,15 +31973,15 @@ async function addSummary(config, sha, commit, result) {
 }
 
 /**
- * Get Config
- * @typedef {Object} Config
+ * Get Inputs
+ * @typedef {Object} Inputs
  * @property {String} sha
  * @property {String} selector
  * @property {Boolean} summary
  * @property {String} token
- * @return {Config}
+ * @return {Inputs}
  */
-function getConfig() {
+function getInputs() {
     return {
         sha: core.getInput('sha'),
         selector: core.getInput('selector'),
