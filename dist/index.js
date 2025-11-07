@@ -31837,102 +31837,101 @@ var __webpack_exports__ = {};
 const core = __nccwpck_require__(7484)
 const github = __nccwpck_require__(3228)
 
-;(async () => {
-    try {
-        core.info(`🏳️ Starting Get Commit Action`)
+async function main() {
+    core.info(`🏳️ Starting Get Commit Action`)
 
-        // Debug
-        core.startGroup('Debug')
-        console.log('github.context.repo:', github.context.repo)
-        core.endGroup() // Debug
+    // Debug
+    core.startGroup('Debug')
+    console.log('github.context.repo:', github.context.repo)
+    core.endGroup() // Debug
 
-        core.startGroup('Debug: github.context')
-        console.log(github.context)
-        core.endGroup() // Debug github.context
-        core.startGroup('Debug: process.env')
-        console.log(process.env)
-        core.endGroup() // Debug process.env
+    // core.startGroup('Debug: github.context')
+    // console.log(github.context)
+    // core.endGroup() // Debug github.context
+    // core.startGroup('Debug: process.env')
+    // console.log(process.env)
+    // core.endGroup() // Debug process.env
 
-        // Inputs
-        const inputs = getInputs()
-        core.startGroup('Inputs')
-        console.log(inputs)
-        core.endGroup() // Inputs
-
-        // Processing
-        const octokit = github.getOctokit(inputs.token)
-        const sha = inputs.sha || github.context.sha
-        core.info(`sha: \u001b[32;1m${sha}`)
-
-        // const response = await octokit.rest.git.getCommit({
-        //     ...github.context.repo,
-        //     commit_sha: sha,
-        // })
-
-        const url = `/repos/${github.context.repo.owner}/${github.context.repo.repo}/commits/${sha}`
-        core.debug(`url: ${url}`)
-        const options = {
-            ...github.context.repo,
-            ref: sha,
-            headers: {
-                'X-GitHub-Api-Version': '2022-11-28',
-            },
-        }
-        const response = await octokit.request(`GET ${url}`, options)
-
-        core.startGroup('Commit')
-        console.log(response.data)
-        core.endGroup() // Commit
-
-        // Results
-        const results = inputs.selector
-            .split('.')
-            .reduce((acc, key) => acc?.[key], response.data)
-
-        const result =
-            typeof results === 'object' ? JSON.stringify(results) : results.toString()
-
-        if (inputs.selector) {
-            core.startGroup('Results')
-            console.log('raw results:\n', results)
-            console.log('string result:\n', result)
-            core.endGroup() // Commit Data
-            if (!result) {
-                core.warning(`No result for selector: ${inputs.selector}`)
-            }
-        }
-
-        // Outputs
-        core.info('📩 Setting Outputs')
-        core.setOutput('sha', sha)
-        core.setOutput('commit', JSON.stringify(response.data))
-        core.setOutput('result', result)
-
-        // Summary
-        if (inputs.summary) {
-            core.info('📝 Writing Job Summary')
-            try {
-                await addSummary(inputs, sha, response.data, result)
-            } catch (e) {
-                console.log(e)
-                core.error(`Error writing Job Summary ${e.message}`)
-            }
-        }
-
-        core.info(`✅ \u001b[32;1mFinished Success`)
-    } catch (e) {
-        core.debug(e)
-        core.info(e.message)
-        core.setFailed(e.message)
+    // Inputs
+    const inputs = {
+        sha: core.getInput('sha'),
+        selector: core.getInput('selector'),
+        summary: core.getBooleanInput('summary'),
+        token: core.getInput('token', { required: true }),
     }
-})()
+    core.startGroup('Inputs')
+    console.log(inputs)
+    core.endGroup() // Inputs
+
+    // Processing
+    const octokit = github.getOctokit(inputs.token)
+    const sha = inputs.sha || github.context.sha
+    core.info(`sha: \u001b[32;1m${sha}`)
+
+    // const response = await octokit.rest.git.getCommit({
+    //     ...github.context.repo,
+    //     commit_sha: sha,
+    // })
+
+    const url = `/repos/${github.context.repo.owner}/${github.context.repo.repo}/commits/${sha}`
+    core.debug(`url: ${url}`)
+    const options = {
+        ...github.context.repo,
+        ref: sha,
+        headers: {
+            'X-GitHub-Api-Version': '2022-11-28',
+        },
+    }
+    const response = await octokit.request(`GET ${url}`, options)
+
+    core.startGroup('Commit')
+    console.log(response.data)
+    core.endGroup() // Commit
+
+    // Results
+    const results = inputs.selector
+        .split('.')
+        .reduce((acc, key) => acc?.[key], response.data)
+
+    const result =
+        typeof results === 'object' ? JSON.stringify(results) : results.toString()
+
+    if (inputs.selector) {
+        core.startGroup('Results')
+        console.log('raw results:\n', results)
+        console.log('string result:\n', result)
+        core.endGroup() // Commit Data
+        if (!result) {
+            core.warning(`No result for selector: ${inputs.selector}`)
+        }
+    }
+
+    // Outputs
+    core.info('📩 Setting Outputs')
+    core.setOutput('sha', sha)
+    core.setOutput('commit', response.data)
+    core.setOutput('result', result)
+
+    // Summary
+    if (inputs.summary) {
+        core.info('📝 Writing Job Summary')
+        try {
+            await addSummary(inputs, sha, response.data, result)
+        } catch (e) {
+            console.log(e)
+            core.error(`Error writing Job Summary ${e.message}`)
+        }
+    }
+
+    core.info(`✅ \u001b[32;1mFinished Success`)
+}
 
 /**
  * Add Summary
- * @param {Inputs} inputs
- * @param {String} sha
- * @param {Object} commit
- * @param {String} result
+ * @param {object} inputs
+ * @param {string} sha
+ * @param {object} commit
+ * @param {string} result
  * @return {Promise<void>}
  */
 async function addSummary(inputs, sha, commit, result) {
@@ -31972,23 +31971,11 @@ async function addSummary(inputs, sha, commit, result) {
     await core.summary.write()
 }
 
-/**
- * Get Inputs
- * @typedef {Object} Inputs
- * @property {String} sha
- * @property {String} selector
- * @property {Boolean} summary
- * @property {String} token
- * @return {Inputs}
- */
-function getInputs() {
-    return {
-        sha: core.getInput('sha'),
-        selector: core.getInput('selector'),
-        summary: core.getBooleanInput('summary'),
-        token: core.getInput('token', { required: true }),
-    }
-}
+main().catch((e) => {
+    core.debug(e)
+    core.info(e.message)
+    core.setFailed(e.message)
+})
 
 module.exports = __webpack_exports__;
 /******/ })()
