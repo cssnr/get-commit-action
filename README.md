@@ -9,9 +9,9 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_get-commit-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_get-commit-action)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/get-commit-action?logo=github&label=updated)](https://github.com/cssnr/get-commit-action/pulse)
 [![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/get-commit-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/get-commit-action)
-[![GitHub Contributors](https://img.shields.io/github/contributors-anon/cssnr/get-commit-action?logo=github)](https://github.com/cssnr/get-commit-action/graphs/contributors)
 [![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/get-commit-action?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/get-commit-action?tab=readme-ov-file#readme)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/get-commit-action?logo=htmx)](https://github.com/cssnr/get-commit-action)
+[![GitHub Contributors](https://img.shields.io/github/contributors-anon/cssnr/get-commit-action?logo=github)](https://github.com/cssnr/get-commit-action/graphs/contributors)
 [![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/get-commit-action?logo=github)](https://github.com/cssnr/get-commit-action/discussions)
 [![GitHub Forks](https://img.shields.io/github/forks/cssnr/get-commit-action?style=flat&logo=github)](https://github.com/cssnr/get-commit-action/forks)
 [![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/get-commit-action?style=flat&logo=github)](https://github.com/cssnr/get-commit-action/stargazers)
@@ -20,6 +20,9 @@
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-72a5f2?logo=kofi&label=support)](https://ko-fi.com/cssnr)
 
 # Get Commit Action
+
+<a title="Get Commit Action" href="https://actions.cssnr.com/" target="_blank">
+<img alt="Get Commit Action" align="right" width="128" height="auto" src="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/get-commit-action/logo.png"></a>
 
 - [Inputs](#Inputs)
 - [Outputs](#Outputs)
@@ -61,16 +64,30 @@ See some [Examples](#Examples) of this action below...
 
 ## Inputs
 
-| Input    | Default&nbsp;Value   | Description&nbsp;of&nbsp;Input |
-| :------- | :------------------- | :----------------------------- |
-| sha      | `github.context.sha` | SHA of Commit                  |
-| selector | -                    | Object Selector \*             |
-| summary  | `true`               | Add Summary to Job \*          |
-| token    | `github.token`       | GitHub Access Token PAT [^1]   |
+| Input               | Default&nbsp;Value  | Description&nbsp;of&nbsp;Input |
+| :------------------ | :------------------ | :----------------------------- |
+| [sha](#sha)         | _[see below](#sha)_ | SHA of Commit                  |
+| [path](#path)       | -                   | Object Selector \*             |
+| [summary](#summary) | `true`              | Add Summary to Job \*          |
+| token               | `github.token`      | GitHub Access Token PAT [^1]   |
 
-**selector:** JavaScript Object selector in dot notation. Examples: `commit` or `commit.message`
+#### sha
 
-**summary:** Write the results to the Job Summary. To disable set to: `false`
+1. User Provided `sha`
+2. Pull Request Head `sha`
+3. Commit `sha`
+
+#### path
+
+A [JSONPath](https://jsonpath.com/) of a value to set as the [result](#result) output.
+
+This is a [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) path and supports bare selectors `project.version`.
+
+Previously Deprecated Input: `selector` (backwards compatible)
+
+#### summary
+
+Write the results to the Job Summary. To disable set to: `false`
 
 <details><summary>👀 View Example Job Summary</summary>
 
@@ -213,11 +230,17 @@ See the [Examples](#Examples) for more.
 
 ## Outputs
 
-| Output | Description    |
-| :----- | :------------- |
-| sha    | Commit SHA     |
-| commit | Commit JSON    |
-| result | Parsed Results |
+| Output            | Description&nbsp;of&nbsp;Output |
+| :---------------- | :------------------------------ |
+| sha               | Commit SHA                      |
+| commit            | Commit JSON                     |
+| [result](#result) | Results from [path](#path)      |
+| message           | Commit Message                  |
+| html_url          | HTML URL                        |
+| comment_count     | Comment Count                   |
+| author            | Commit Author (Parsed)          |
+
+#### result
 
 <details><summary>View Example Commit JSON</summary>
 
@@ -334,15 +357,17 @@ See the [Examples](#Examples) for more.
 
 - name: 'Echo Output'
   env:
-    COMMIT: ${{ steps.commit.outputs.commit }}
-    RESULT: ${{ steps.commit.outputs.result }}
+    result: ${{ steps.commit.outputs.result }}
   run: |
     echo "sha: ${{ steps.commit.outputs.sha }}"
-    echo "commit: ${COMMIT}"
-    echo "result: ${RESULT}"
+    echo "commit: ${{ steps.commit.outputs.commit }}"
+    echo "result: ${result}"
+    echo "message: ${{ steps.commit.outputs.message }}"
+    echo "comment_count: ${{ steps.commit.outputs.comment_count }}"
+    echo "author: ${{ steps.commit.outputs.author }}"
 ```
 
-Note: due to the way `${{}}` expressions are evaluated, multi-line output gets executed in a run block.
+Note: multi-line outputs in a run block using `${{}}` are evaluated; therefore, is set as an env.
 
 ## Examples
 
