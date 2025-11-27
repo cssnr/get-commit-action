@@ -41,7 +41,7 @@ jobs:
         id: test1
         uses: ./
         with:
-          summary: false
+          summary: ${{ !github.event.act }}
           path: "author.type"
           #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2
 
@@ -60,7 +60,7 @@ jobs:
         id: test2
         uses: ./
         with:
-          summary: false
+          summary: ${{ !github.event.act }}
           path: "author.type"
           #sha: ${{ github.event.pull_request.head.sha }}
 

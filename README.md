@@ -246,37 +246,37 @@ See the [Examples](#Examples) for more.
 
 ```json
 {
-  "sha": "d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-  "node_id": "C_kwDOONDk4toAKGQ2YjAzMGMyOGZiNGU1NWMyMzNiODMzMjNmZmQxYjQxY2Y0NzI0MWE",
+  "sha": "4216ad54c491ec42df1f17c61acade1f74a59b98",
+  "node_id": "C_kwDOONDk4toAKDQyMTZhZDU0YzQ5MWVjNDJkZjFmMTdjNjFhY2FkZTFmNzRhNTliOTg",
   "commit": {
     "author": {
       "name": "Shane",
       "email": "6071159+smashedr@users.noreply.github.com",
-      "date": "2025-03-22T22:45:32Z"
+      "date": "2025-11-27T04:10:02Z"
     },
     "committer": {
       "name": "Shane",
       "email": "6071159+smashedr@users.noreply.github.com",
-      "date": "2025-03-22T22:45:32Z"
+      "date": "2025-11-27T04:10:02Z"
     },
-    "message": "Updates",
+    "message": "Test Commit",
     "tree": {
-      "sha": "533436a6c0359dd3743da72acc30366d5d50fbc2",
-      "url": "https://api.github.com/repos/cssnr/get-commit-action/git/trees/533436a6c0359dd3743da72acc30366d5d50fbc2"
+      "sha": "27923b4044f4753a4ba45aea8d06a3e62b837527",
+      "url": "https://api.github.com/repos/cssnr/get-commit-action/git/trees/27923b4044f4753a4ba45aea8d06a3e62b837527"
     },
-    "url": "https://api.github.com/repos/cssnr/get-commit-action/git/commits/d6b030c28fb4e55c233b83323ffd1b41cf47241a",
+    "url": "https://api.github.com/repos/cssnr/get-commit-action/git/commits/4216ad54c491ec42df1f17c61acade1f74a59b98",
     "comment_count": 0,
     "verification": {
       "verified": true,
       "reason": "valid",
-      "signature": "-----BEGIN PGP SIGNATURE-----\n\niHUEABYKAB0WIQRXgKNZZbHv52xw4573HsvCBq6NtQUCZ989jAAKCRD3HsvCBq6N\ntc2QAP4xDEyh1mPoDbry+AagGQgYQzQU9pN+Q9A1nLNptiLR8gD/c5fEHeDBOIJo\nNqZCh4BACo3KFF3sXysTdqr3zWIOqwI=\n=0MJn\n-----END PGP SIGNATURE-----",
-      "payload": "tree 533436a6c0359dd3743da72acc30366d5d50fbc2\nparent 49ed46652824d2fa19f75ae0cb9b56b8a6563a40\nauthor Shane <6071159+smashedr@users.noreply.github.com> 1742683532 -0700\ncommitter Shane <6071159+smashedr@users.noreply.github.com> 1742683532 -0700\n\nUpdates\n",
-      "verified_at": "2025-03-22T22:45:07Z"
+      "signature": "-----BEGIN PGP SIGNATURE-----\n\niHUEABYKAB0WIQRXgKNZZbHv52xw4573HsvCBq6NtQUCaSfPGgAKCRD3HsvCBq6N\ntUN6AQDSP+hCmNblfPFQ/qPWb0oo3v40lx9Y+YluoDYkddYK3QEArrn1uphOfEkQ\nwYMGc7BujGOWxAQ/UmWK9f71dJtL6gA=\n=QU/D\n-----END PGP SIGNATURE-----",
+      "payload": "tree 27923b4044f4753a4ba45aea8d06a3e62b837527\nparent 80d6851d422a0a584c7dda8544efa931f47f76d4\nauthor Shane <6071159+smashedr@users.noreply.github.com> 1764216602 -0800\ncommitter Shane <6071159+smashedr@users.noreply.github.com> 1764216602 -0800\n\nTest Commit\n",
+      "verified_at": "2025-11-27T04:09:30Z"
     }
   },
-  "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-  "html_url": "https://github.com/cssnr/get-commit-action/commit/d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-  "comments_url": "https://api.github.com/repos/cssnr/get-commit-action/commits/d6b030c28fb4e55c233b83323ffd1b41cf47241a/comments",
+  "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/4216ad54c491ec42df1f17c61acade1f74a59b98",
+  "html_url": "https://github.com/cssnr/get-commit-action/commit/4216ad54c491ec42df1f17c61acade1f74a59b98",
+  "comments_url": "https://api.github.com/repos/cssnr/get-commit-action/commits/4216ad54c491ec42df1f17c61acade1f74a59b98/comments",
   "author": {
     "login": "smashedr",
     "id": 6071159,
@@ -321,30 +321,16 @@ See the [Examples](#Examples) for more.
   },
   "parents": [
     {
-      "sha": "49ed46652824d2fa19f75ae0cb9b56b8a6563a40",
-      "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/49ed46652824d2fa19f75ae0cb9b56b8a6563a40",
-      "html_url": "https://github.com/cssnr/get-commit-action/commit/49ed46652824d2fa19f75ae0cb9b56b8a6563a40"
+      "sha": "80d6851d422a0a584c7dda8544efa931f47f76d4",
+      "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/80d6851d422a0a584c7dda8544efa931f47f76d4",
+      "html_url": "https://github.com/cssnr/get-commit-action/commit/80d6851d422a0a584c7dda8544efa931f47f76d4"
     }
   ],
   "stats": {
-    "total": 2,
-    "additions": 1,
+    "total": 1,
+    "additions": 0,
     "deletions": 1
-  },
-  "files": [
-    {
-      "sha": "b095106eaeb1d8cd5cf78be67576080783600386",
-      "filename": ".github/workflows/test.yaml",
-      "status": "modified",
-      "additions": 1,
-      "deletions": 1,
-      "changes": 2,
-      "blob_url": "https://github.com/cssnr/get-commit-action/blob/d6b030c28fb4e55c233b83323ffd1b41cf47241a/.github%2Fworkflows%2Ftest.yaml",
-      "raw_url": "https://github.com/cssnr/get-commit-action/raw/d6b030c28fb4e55c233b83323ffd1b41cf47241a/.github%2Fworkflows%2Ftest.yaml",
-      "contents_url": "https://api.github.com/repos/cssnr/get-commit-action/contents/.github%2Fworkflows%2Ftest.yaml?ref=d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-      "patch": "@@ -39,7 +39,7 @@ jobs:\n           #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2\n \n       - name: \"1: Verify Non-Pull\"\n-        if: ${{ !github.event.act }}\n+        if: ${{ github.event_name != 'pull_request' }}\n         env:\n           COMMIT: ${{ steps.test.outputs.commit }}\n           RESULT: ${{ steps.test.outputs.result }}"
-    }
-  ]
+  }
 }
 ```
 
