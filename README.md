@@ -39,6 +39,12 @@ This can be done with a simple `run:` step; however, this action simplifies maki
 - name: 'Get Commit Action'
   id: commit
   uses: cssnr/get-commit-action@master
+
+- name: 'Echo Output'
+  run: |
+    echo "sha: ${{ steps.commit.outputs.sha }}"
+    echo "message: ${{ steps.commit.outputs.message }}"
+    echo "author.url: ${{ fromJSON(steps.commit.outputs.commit).author.url }}"
 ```
 
 <details><summary>View Native Alternative</summary>
@@ -311,8 +317,6 @@ See the [Examples](#Examples) for more.
 
 This is the parsed result from the provided input [path](#path).
 
----
-
 ```yaml
 - name: 'Get Commit Action'
   id: commit
@@ -342,18 +346,14 @@ Note: multi-line outputs in a run block using `${{}}` are evaluated; therefore, 
 - name: 'Get Commit Action'
   id: commit
   uses: cssnr/get-commit-action@master
-  with:
-    selector: 'commit.message'
 
 - name: 'Echo Output'
-  env:
-    RESULT: ${{ steps.commit.outputs.result }}
   run: |
-    echo "commit.message: ${RESULT}"
+    echo "message: ${{ steps.commit.outputs.message }}"
 ```
 
 </details>
-<details open><summary>Get The head Commit Message for a PR</summary>
+<details open><summary>Get The Commit Author Avatar URL</summary>
 
 ```yaml
 - name: 'Get Commit Action'
@@ -362,30 +362,26 @@ Note: multi-line outputs in a run block using `${{}}` are evaluated; therefore, 
   uses: cssnr/get-commit-action@master
   with:
     sha: ${{ github.event.pull_request.head.sha }}
-    selector: 'commit.message'
+    selector: 'author.avatar_url'
 
 - name: 'Echo Output'
-  env:
-    RESULT: ${{ steps.commit.outputs.result }}
   run: |
-    echo "commit.message: ${RESULT}"
+    echo "avatar_url: ${{ steps.commit.outputs.result }}"
 ```
 
 </details>
-<details><summary>Get The Author's Login</summary>
+<details open><summary>Use the commit JSON</summary>
 
 ```yaml
 - name: 'Get Commit Action'
-  if: ${{ github.event_name == 'pull_request' }}
   id: commit
   uses: cssnr/get-commit-action@master
-  with:
-    sha: ${{ github.event.pull_request.head.sha }}
-    selector: 'author.login'
 
 - name: 'Echo Output'
   run: |
-    echo "author.login: ${{ steps.commit.outputs.result }}"
+    echo "stats.total: ${{ fromJSON(steps.commit.outputs.result).stats.total }}"
+    echo "stats.additions: ${{ fromJSON(steps.commit.outputs.result).stats.additions }}"
+    echo "stats.deletions: ${{ fromJSON(steps.commit.outputs.result).stats.deletions }}"
 ```
 
 </details>
