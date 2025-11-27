@@ -94,7 +94,8 @@ This is a [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) path and su
 
 Previous Deprecated Input: `selector` (backwards compatible)
 
-This is an optional convenience for a single value.  
+This is an optional convenience for a single value.
+
 Recommended usage is: `${{ fromJSON(steps.stepID.outputs.commit).sha }}`
 
 Reference: https://docs.github.com/en/actions/reference/workflows-and-actions/expressions#fromjson
@@ -207,6 +208,8 @@ summary: true</code></pre>
 ---
 
 </details>
+
+Default: `true`
 
 See the [Examples](#Examples) for more.
 
