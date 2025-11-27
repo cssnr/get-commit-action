@@ -51,7 +51,7 @@ jobs:
         with:
           outputs: ${{ toJSON(steps.pull.outputs) }}
           data: |
-            sha: ${{ github.event.pull_request.head.sha }}
+            sha: ${{ github.sha }}
             result:
             commit:
 
