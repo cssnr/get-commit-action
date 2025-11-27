@@ -33390,7 +33390,6 @@ async function addSummary(inputs, sha, commit, result) {
         coreExports.summary.addRaw('</details>\n');
     }
     coreExports.summary.addRaw('<details><summary>Commit</summary>');
-    coreExports.summary.addRaw('\n\nNote: `files` key removed to improve rendering. Full output is available in the job logs.\n\n');
     coreExports.summary.addCodeBlock(JSON.stringify(commit, null, 2), 'json');
     coreExports.summary.addRaw('</details>\n');
     const cleanInputs = Object.fromEntries(Object.entries(inputs).filter(([key]) => key !== 'token'));
