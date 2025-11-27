@@ -42,7 +42,7 @@ jobs:
         uses: ./
         with:
           summary: false
-          #path: "commit.message"
+          path: "author.type"
           #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2
 
       - name: "1 - Validate Outputs"
@@ -52,7 +52,7 @@ jobs:
           outputs: ${{ toJSON(steps.test1.outputs) }}
           data: |
             sha: ${{ github.sha }}
-            result:
+            result: User
             commit:
 
       - name: "2 - Test Pull"
