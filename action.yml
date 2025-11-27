@@ -1,13 +1,14 @@
-name: "Get Commit Action"
-description: "Get Commit and Parse Details such as the head Commit Message for a Pull Request event."
+name: "Get Commit"
+description: "Get Full Commit Details for Push and Pull Requests including the Head Commit."
 author: "Shane"
+
 branding:
   icon: "git-pull-request"
-  color: "white"
+  color: "red"
 
 inputs:
   sha:
-    description: "SHA here"
+    description: "Specify the SHA of the Commit"
   path:
     description: "Object Selector"
   selector:

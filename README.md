@@ -70,13 +70,13 @@ See some [Examples](#Examples) of this action below...
 
 ## Inputs
 
-| Input               | Default&nbsp;Value  | Description&nbsp;of&nbsp;Input |
-| :------------------ | :------------------ | :----------------------------- |
-| [sha](#sha)         | _[see below](#sha)_ | SHA of Commit                  |
-| [path](#path)       | -                   | Object Selector                |
-| `selector`          | _Deprecated_        | Use [path](#path)              |
-| [summary](#summary) | `true`              | Add Summary to Job             |
-| token               | `github.token`      | GitHub Access Token PAT [^1]   |
+| Input               | Default&nbsp;Value  | Description&nbsp;of&nbsp;Input             |
+| :------------------ | :------------------ | :----------------------------------------- |
+| [sha](#sha)         | _[see below](#sha)_ | SHA of Commit                              |
+| [path](#path)       | -                   | [JSONPath](https://jsonpath.com/) Selector |
+| `selector`          | _Deprecated_        | Use [path](#path)                          |
+| [summary](#summary) | `true`              | Add Summary to Job                         |
+| token               | `github.token`      | GitHub Access Token PAT [^1]               |
 
 #### sha
 
