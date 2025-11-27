@@ -10,9 +10,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  push:
-    name: "Push"
-    if: ${{ github.event_name == 'push' }}
+  test:
+    name: "Test"
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
@@ -37,63 +36,46 @@ jobs:
         continue-on-error: true
         run: env
 
-      - name: "Test"
-        id: test
+      - name: "1 - Test Non-Pull"
+        if: ${{ github.event_name != 'pull_request' }}
+        id: test1
         uses: ./
         with:
           summary: false
           #path: "commit.message"
           #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2
 
-      - name: "Validate Outputs"
+      - name: "1 - Validate Outputs"
+        if: ${{ github.event_name != 'pull_request' }}
         uses: cssnr/validate-outputs-action@master
         with:
-          outputs: ${{ toJSON(steps.test.outputs) }}
+          outputs: ${{ toJSON(steps.pull.outputs) }}
           data: |
             sha: ${{ github.event.pull_request.head.sha }}
             result:
             commit:
 
-  pull:
-    name: "Pull"
-    if: ${{ github.event_name == 'pull_request' }}
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-
-    steps:
-      - name: "Checkout"
-        uses: actions/checkout@v6
-
-      - name: "Debug event.json"
-        if: ${{ !github.event.act }}
-        continue-on-error: true
-        run: cat "${GITHUB_EVENT_PATH}"
-
-      - name: "Debug CTX github"
-        if: ${{ !github.event.act }}
-        continue-on-error: true
-        env:
-          GITHUB_CTX: ${{ toJSON(github) }}
-        run: echo "$GITHUB_CTX"
-
-      - name: "Debug Environment"
-        if: ${{ !github.event.act }}
-        continue-on-error: true
-        run: env
-
-      - name: "Test"
-        id: test
+      - name: "2 - Test Pull"
+        if: ${{ github.event_name == 'pull_request' }}
+        id: test2
         uses: ./
         with:
           summary: false
           #path: "commit.message"
           #sha: ${{ github.event.pull_request.head.sha }}
 
-      - name: "Validate Outputs"
+      - name: "2 - Validate Outputs"
+        if: ${{ github.event_name == 'pull_request' }}
         uses: cssnr/validate-outputs-action@master
         with:
-          outputs: ${{ toJSON(steps.test.outputs) }}
+          outputs: ${{ toJSON(steps.pull.outputs) }}
           data: |
             sha: ${{ github.event.pull_request.head.sha }}
             result:
             commit:
+
+      - name: "Schedule Failure Notification"
+        if: ${{ failure() && github.event_name == 'schedule' }}
+        uses: sarisia/actions-status-discord@v1
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
