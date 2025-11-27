@@ -126,7 +126,11 @@ async function addSummary(
     core.summary.addRaw('</details>\n')
 
     // delete inputs.token
-    const { token, ...cleanInputs } = inputs
+    // const { token, ...cleanInputs } = inputs
+    const cleanInputs = Object.fromEntries(
+        Object.entries(inputs).filter(([key]) => key !== 'token')
+    )
+
     const yaml = Object.entries(cleanInputs)
         .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
         .join('\n')

@@ -48,17 +48,17 @@ jobs:
         uses: ./
         with:
           summary: false
-          selector: "commit.message"
+          #path: "commit.message"
           #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2
 
-      #- name: "Test Pull"
-      #  if: ${{ github.event_name == 'pull_request' }}
-      #  id: pull
-      #  uses: ./
-      #  with:
-      #    summary: false
-      #    selector: "commit.message"
-      #    sha: ${{ github.event.pull_request.head.sha }}
+      - name: "Test Pull"
+        if: ${{ github.event_name == 'pull_request' }}
+        id: pull
+        uses: ./
+        with:
+          summary: false
+          #path: "commit.message"
+          #sha: ${{ github.event.pull_request.head.sha }}
 
       #- name: "Verify"
       #  env:
