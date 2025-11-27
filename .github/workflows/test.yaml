@@ -49,7 +49,7 @@ jobs:
         if: ${{ github.event_name != 'pull_request' }}
         uses: cssnr/validate-outputs-action@master
         with:
-          outputs: ${{ toJSON(steps.pull.outputs) }}
+          outputs: ${{ toJSON(steps.test1.outputs) }}
           data: |
             sha: ${{ github.sha }}
             result:
@@ -68,7 +68,7 @@ jobs:
         if: ${{ github.event_name == 'pull_request' }}
         uses: cssnr/validate-outputs-action@master
         with:
-          outputs: ${{ toJSON(steps.pull.outputs) }}
+          outputs: ${{ toJSON(steps.test2.outputs) }}
           data: |
             sha: ${{ github.event.pull_request.head.sha }}
             result:
