@@ -92,9 +92,7 @@ function parseJSONPath(value: string, data: object) {
     if (!value) return ''
     const values = JSONPath({ path: value, json: data })
     console.log('parsed values:', values)
-    if (!values.length) {
-        throw new Error(`No Values for Path: ${value}`)
-    }
+    // if (!values.length) throw new Error(`No Values for Path: ${value}`)
     return values[0]
 }
 

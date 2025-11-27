@@ -61,7 +61,7 @@ jobs:
         uses: ./
         with:
           summary: ${{ !github.event.act }}
-          path: "author.type"
+          path: "author.type2"
           #sha: ${{ github.event.pull_request.head.sha }}
 
       - name: "2 - Validate Outputs"

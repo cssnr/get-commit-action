@@ -33374,9 +33374,6 @@ function parseJSONPath(value, data) {
         return '';
     const values = JSONPath({ path: value, json: data });
     console.log('parsed values:', values);
-    if (!values.length) {
-        throw new Error(`No Values for Path: ${value}`);
-    }
     return values[0];
 }
 async function addSummary(inputs, sha, commit, result) {
