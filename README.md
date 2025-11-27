@@ -358,23 +358,6 @@ Note: multi-line outputs in a run block using `${{}}` are evaluated; therefore, 
 ```
 
 </details>
-<details open><summary>Get The Commit Author Avatar URL</summary>
-
-```yaml
-- name: 'Get Commit Action'
-  if: ${{ github.event_name == 'pull_request' }}
-  id: commit
-  uses: cssnr/get-commit-action@master
-  with:
-    sha: ${{ github.event.pull_request.head.sha }}
-    selector: 'author.avatar_url'
-
-- name: 'Echo Output'
-  run: |
-    echo "avatar_url: ${{ steps.commit.outputs.result }}"
-```
-
-</details>
 <details open><summary>Use the commit JSON</summary>
 
 ```yaml
@@ -387,6 +370,22 @@ Note: multi-line outputs in a run block using `${{}}` are evaluated; therefore, 
     echo "stats.total: ${{ fromJSON(steps.commit.outputs.result).stats.total }}"
     echo "stats.additions: ${{ fromJSON(steps.commit.outputs.result).stats.additions }}"
     echo "stats.deletions: ${{ fromJSON(steps.commit.outputs.result).stats.deletions }}"
+```
+
+</details>
+<details open><summary>Get The Path Selector</summary>
+
+```yaml
+- name: 'Get Commit Action'
+  if: ${{ github.event_name == 'pull_request' }}
+  id: commit
+  uses: cssnr/get-commit-action@master
+  with:
+    selector: 'author.avatar_url'
+
+- name: 'Echo Output'
+  run: |
+    echo "avatar_url: ${{ steps.commit.outputs.result }}"
 ```
 
 </details>
