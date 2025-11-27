@@ -1,33 +1,41 @@
-name: "Get Commit Action"
-description: "Get Commit and Parse Details such as the head Commit Message for a Pull Request event."
+name: "Get Commit"
+description: "Get Full Commit Details for Push and Pull Requests including the Head Commit."
 author: "Shane"
+
 branding:
   icon: "git-pull-request"
-  color: "white"
+  color: "red"
 
 inputs:
   sha:
-    description: "SHA here"
-    required: false
+    description: "Specify the SHA of the Commit"
+  path:
+    description: "Object Selector"
   selector:
     description: "Object Selector"
-    required: false
+    deprecationMessage: "Input changed too: path"
   summary:
     description: "Add Summary to Job"
-    required: false
     default: "true"
   token:
     description: "GitHub Token"
-    required: false
     default: ${{ github.token }}
 
 outputs:
   sha:
     description: "Commit SHA"
   commit:
-    description: "Full Commit"
+    description: "Full Commit JSON"
   result:
-    description: "Parsed Result"
+    description: "Result from Path"
+  message:
+    description: "Commit Message"
+  html_url:
+    description: "HTML URL"
+  comment_count:
+    description: "Comment Count"
+  author:
+    description: "Commit Author (Parsed)"
 
 runs:
   using: "node24"

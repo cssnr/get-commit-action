@@ -9,9 +9,9 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=cssnr_get-commit-action&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=cssnr_get-commit-action)
 [![GitHub Last Commit](https://img.shields.io/github/last-commit/cssnr/get-commit-action?logo=github&label=updated)](https://github.com/cssnr/get-commit-action/pulse)
 [![Codeberg Last Commit](https://img.shields.io/gitea/last-commit/cssnr/get-commit-action/master?gitea_url=https%3A%2F%2Fcodeberg.org%2F&logo=codeberg&logoColor=white&label=updated)](https://codeberg.org/cssnr/get-commit-action)
-[![GitHub Contributors](https://img.shields.io/github/contributors-anon/cssnr/get-commit-action?logo=github)](https://github.com/cssnr/get-commit-action/graphs/contributors)
 [![GitHub Repo Size](https://img.shields.io/github/repo-size/cssnr/get-commit-action?logo=bookstack&logoColor=white&label=repo%20size)](https://github.com/cssnr/get-commit-action?tab=readme-ov-file#readme)
 [![GitHub Top Language](https://img.shields.io/github/languages/top/cssnr/get-commit-action?logo=htmx)](https://github.com/cssnr/get-commit-action)
+[![GitHub Contributors](https://img.shields.io/github/contributors-anon/cssnr/get-commit-action?logo=github)](https://github.com/cssnr/get-commit-action/graphs/contributors)
 [![GitHub Discussions](https://img.shields.io/github/discussions/cssnr/get-commit-action?logo=github)](https://github.com/cssnr/get-commit-action/discussions)
 [![GitHub Forks](https://img.shields.io/github/forks/cssnr/get-commit-action?style=flat&logo=github)](https://github.com/cssnr/get-commit-action/forks)
 [![GitHub Repo Stars](https://img.shields.io/github/stars/cssnr/get-commit-action?style=flat&logo=github)](https://github.com/cssnr/get-commit-action/stargazers)
@@ -20,6 +20,9 @@
 [![Ko-fi](https://img.shields.io/badge/Ko--fi-72a5f2?logo=kofi&label=support)](https://ko-fi.com/cssnr)
 
 # Get Commit Action
+
+<a title="Get Commit Action" href="https://actions.cssnr.com/" target="_blank">
+<img alt="Get Commit Action" align="right" width="128" height="auto" src="https://raw.githubusercontent.com/smashedr/repo-images/refs/heads/master/get-commit-action/logo.png"></a>
 
 - [Inputs](#Inputs)
 - [Outputs](#Outputs)
@@ -36,6 +39,12 @@ This can be done with a simple `run:` step; however, this action simplifies maki
 - name: 'Get Commit Action'
   id: commit
   uses: cssnr/get-commit-action@master
+
+- name: 'Echo Output'
+  run: |
+    echo "sha: ${{ steps.commit.outputs.sha }}"
+    echo "message: ${{ steps.commit.outputs.message }}"
+    echo "author.url: ${{ fromJSON(steps.commit.outputs.commit).author.url }}"
 ```
 
 <details><summary>View Native Alternative</summary>
@@ -61,57 +70,80 @@ See some [Examples](#Examples) of this action below...
 
 ## Inputs
 
-| Input    | Default&nbsp;Value   | Description&nbsp;of&nbsp;Input |
-| :------- | :------------------- | :----------------------------- |
-| sha      | `github.context.sha` | SHA of Commit                  |
-| selector | -                    | Object Selector \*             |
-| summary  | `true`               | Add Summary to Job \*          |
-| token    | `github.token`       | GitHub Access Token PAT [^1]   |
+| Input               | Default&nbsp;Value  | Description&nbsp;of&nbsp;Input             |
+| :------------------ | :------------------ | :----------------------------------------- |
+| [sha](#sha)         | _[see below](#sha)_ | SHA of Commit                              |
+| [path](#path)       | -                   | [JSONPath](https://jsonpath.com/) Selector |
+| `selector`          | _Deprecated_        | Use [path](#path)                          |
+| [summary](#summary) | `true`              | Add Summary to Job                         |
+| token               | `github.token`      | GitHub Access Token PAT [^1]               |
 
-**selector:** JavaScript Object selector in dot notation. Examples: `commit` or `commit.message`
+#### sha
 
-**summary:** Write the results to the Job Summary. To disable set to: `false`
+The commit to get is parsed in this order.
+
+1. User Provided `sha`
+2. Pull Request Head `sha`
+3. Commit `sha`
+
+#### path
+
+A [JSONPath](https://jsonpath.com/) of a value to set as the [result](#result) output.
+
+This is a [jsonpath-plus](https://github.com/JSONPath-Plus/JSONPath) path and supports bare selectors: `project.version`
+
+Previous Deprecated Input: `selector` (backwards compatible)
+
+This is an optional convenience for a single value.
+
+Recommended usage is: `${{ fromJSON(steps.stepID.outputs.commit).sha }}`
+
+Reference: https://docs.github.com/en/actions/reference/workflows-and-actions/expressions#fromjson
+
+#### summary
+
+Write the results to the Job Summary. To disable set to: `false`
 
 <details><summary>👀 View Example Job Summary</summary>
 
 ---
 
-sha: [d6b030c28fb4e55c233b83323ffd1b41cf47241a](https://github.com/cssnr/get-commit-action/commit/d6b030c28fb4e55c233b83323ffd1b41cf47241a)
+sha: [8832e214378d83ab8ce6a7f9103538df4d40f8a9](https://github.com/cssnr/get-commit-action/commit/8832e214378d83ab8ce6a7f9103538df4d40f8a9)
 
-<details open><summary>Result</summary><pre lang="text"><code>Updates</code></pre>
+<details open><summary>Result: author.type</summary><pre lang="text"><code>User</code></pre>
 </details>
 <details><summary>Commit</summary><pre lang="json"><code>{
-  "sha": "d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-  "node_id": "C_kwDOONDk4toAKGQ2YjAzMGMyOGZiNGU1NWMyMzNiODMzMjNmZmQxYjQxY2Y0NzI0MWE",
+  "sha": "8832e214378d83ab8ce6a7f9103538df4d40f8a9",
+  "node_id": "C_kwDOONDk4toAKDg4MzJlMjE0Mzc4ZDgzYWI4Y2U2YTdmOTEwMzUzOGRmNGQ0MGY4YTk",
   "commit": {
     "author": {
       "name": "Shane",
       "email": "6071159+smashedr@users.noreply.github.com",
-      "date": "2025-03-22T22:45:32Z"
+      "date": "2025-11-27T04:21:16Z"
     },
     "committer": {
       "name": "Shane",
       "email": "6071159+smashedr@users.noreply.github.com",
-      "date": "2025-03-22T22:45:32Z"
+      "date": "2025-11-27T04:21:16Z"
     },
-    "message": "Updates",
+    "message": "Test Commit",
     "tree": {
-      "sha": "533436a6c0359dd3743da72acc30366d5d50fbc2",
-      "url": "https://api.github.com/repos/cssnr/get-commit-action/git/trees/533436a6c0359dd3743da72acc30366d5d50fbc2"
+      "sha": "b9ed515167100cef873e3388924cb00781adf8e7",
+      "url": "https://api.github.com/repos/cssnr/get-commit-action/git/trees/b9ed515167100cef873e3388924cb00781adf8e7"
     },
-    "url": "https://api.github.com/repos/cssnr/get-commit-action/git/commits/d6b030c28fb4e55c233b83323ffd1b41cf47241a",
+    "url": "https://api.github.com/repos/cssnr/get-commit-action/git/commits/8832e214378d83ab8ce6a7f9103538df4d40f8a9",
     "comment_count": 0,
     "verification": {
       "verified": true,
       "reason": "valid",
-      "signature": "-----BEGIN PGP SIGNATURE-----\n\niHUEABYKAB0WIQRXgKNZZbHv52xw4573HsvCBq6NtQUCZ989jAAKCRD3HsvCBq6N\ntc2QAP4xDEyh1mPoDbry+AagGQgYQzQU9pN+Q9A1nLNptiLR8gD/c5fEHeDBOIJo\nNqZCh4BACo3KFF3sXysTdqr3zWIOqwI=\n=0MJn\n-----END PGP SIGNATURE-----",
-      "payload": "tree 533436a6c0359dd3743da72acc30366d5d50fbc2\nparent 49ed46652824d2fa19f75ae0cb9b56b8a6563a40\nauthor Shane <6071159+smashedr@users.noreply.github.com> 1742683532 -0700\ncommitter Shane <6071159+smashedr@users.noreply.github.com> 1742683532 -0700\n\nUpdates\n",
-      "verified_at": "2025-03-22T22:45:07Z"
+      "signature": "-----BEGIN PGP SIGNATURE-----\n\niHUEABYKAB0WIQRXgKNZZbHv52xw4573HsvCBq6NtQUCaSfRvAAKCRD3HsvCBq6N\ntfyyAP9u7r9Z5eoWicVvLG+j91kaqjQ1LO48GeF6zuUe69tJjQEAzppZy2GVH0Bd\nh0JPyH1rXIfSN5PbFO+aMdS1qXBIBQY=\n=6aFb\n-----END PGP SIGNATURE-----",
+      "payload": "tree b9ed515167100cef873e3388924cb00781adf8e7\nparent 4216ad54c491ec42df1f17c61acade1f74a59b98\nauthor Shane <6071159+smashedr@users.noreply.github.com> 1764217276 -0800\ncommitter Shane <6071159+smashedr@users.noreply.github.com> 1764217276 -0800\n\nTest Commit\n",
+      "verified_at": "2025-11-27T04:20:47Z"
     }
   },
-  "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-  "html_url": "https://github.com/cssnr/get-commit-action/commit/d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-  "comments_url": "https://api.github.com/repos/cssnr/get-commit-action/commits/d6b030c28fb4e55c233b83323ffd1b41cf47241a/comments",
+  "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/8832e214378d83ab8ce6a7f9103538df4d40f8a9",
+  "html_url": "https://github.com/cssnr/get-commit-action/commit/8832e214378d83ab8ce6a7f9103538df4d40f8a9",
+  "comments_url": "https://api.github.com/repos/cssnr/get-commit-action/commits/8832e214378d83ab8ce6a7f9103538df4d40f8a9/comments",
   "author": {
     "login": "smashedr",
     "id": 6071159,
@@ -156,34 +188,20 @@ sha: [d6b030c28fb4e55c233b83323ffd1b41cf47241a](https://github.com/cssnr/get-com
   },
   "parents": [
     {
-      "sha": "49ed46652824d2fa19f75ae0cb9b56b8a6563a40",
-      "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/49ed46652824d2fa19f75ae0cb9b56b8a6563a40",
-      "html_url": "https://github.com/cssnr/get-commit-action/commit/49ed46652824d2fa19f75ae0cb9b56b8a6563a40"
+      "sha": "4216ad54c491ec42df1f17c61acade1f74a59b98",
+      "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/4216ad54c491ec42df1f17c61acade1f74a59b98",
+      "html_url": "https://github.com/cssnr/get-commit-action/commit/4216ad54c491ec42df1f17c61acade1f74a59b98"
     }
   ],
   "stats": {
-    "total": 2,
-    "additions": 1,
-    "deletions": 1
-  },
-  "files": [
-    {
-      "sha": "b095106eaeb1d8cd5cf78be67576080783600386",
-      "filename": ".github/workflows/test.yaml",
-      "status": "modified",
-      "additions": 1,
-      "deletions": 1,
-      "changes": 2,
-      "blob_url": "https://github.com/cssnr/get-commit-action/blob/d6b030c28fb4e55c233b83323ffd1b41cf47241a/.github%2Fworkflows%2Ftest.yaml",
-      "raw_url": "https://github.com/cssnr/get-commit-action/raw/d6b030c28fb4e55c233b83323ffd1b41cf47241a/.github%2Fworkflows%2Ftest.yaml",
-      "contents_url": "https://api.github.com/repos/cssnr/get-commit-action/contents/.github%2Fworkflows%2Ftest.yaml?ref=d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-      "patch": "@@ -39,7 +39,7 @@ jobs:\n           #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2\n \n       - name: \"1: Verify Non-Pull\"\n-        if: ${{ !github.event.act }}\n+        if: ${{ github.event_name != 'pull_request' }}\n         env:\n           COMMIT: ${{ steps.test.outputs.commit }}\n           RESULT: ${{ steps.test.outputs.result }}"
-    }
-  ]
+    "total": 58,
+    "additions": 22,
+    "deletions": 36
+  }
 }</code></pre>
 </details>
-<details><summary>Config</summary><pre lang="yaml"><code>sha: "d6b030c28fb4e55c233b83323ffd1b41cf47241a"
-selector: "commit.message"
+<details><summary>Inputs</summary><pre lang="yaml"><code>sha: "8832e214378d83ab8ce6a7f9103538df4d40f8a9"
+selector: "author.type"
 summary: true</code></pre>
 </details>
 
@@ -191,69 +209,59 @@ summary: true</code></pre>
 
 </details>
 
-Get the commit for the SHA that triggered the workflow.
-
-```yaml
-- name: 'Get Commit Action'
-  id: commit
-  uses: cssnr/get-commit-action@master
-```
-
-Get the head commit for a pull_request event.
-
-```yaml
-- name: 'Get Commit Action'
-  id: commit
-  uses: cssnr/get-commit-action@master
-  with:
-    sha: ${{ github.event.pull_request.head.sha }}
-```
+Default: `true`
 
 See the [Examples](#Examples) for more.
 
 ## Outputs
 
-| Output | Description    |
-| :----- | :------------- |
-| sha    | Commit SHA     |
-| commit | Commit JSON    |
-| result | Parsed Results |
+| Output            | Description&nbsp;of&nbsp;Output |
+| :---------------- | :------------------------------ |
+| sha               | Commit SHA                      |
+| [commit](#commit) | Commit JSON                     |
+| [result](#result) | Results from [path](#path)      |
+| message           | Commit Message                  |
+| html_url          | HTML URL                        |
+| comment_count     | Comment Count                   |
+| author            | Commit Author (Parsed)          |
+
+#### commit
 
 <details><summary>View Example Commit JSON</summary>
 
 ```json
 {
-  "sha": "d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-  "node_id": "C_kwDOONDk4toAKGQ2YjAzMGMyOGZiNGU1NWMyMzNiODMzMjNmZmQxYjQxY2Y0NzI0MWE",
+  "sha": "4216ad54c491ec42df1f17c61acade1f74a59b98",
+  "node_id": "C_kwDOONDk4toAKDQyMTZhZDU0YzQ5MWVjNDJkZjFmMTdjNjFhY2FkZTFmNzRhNTliOTg",
   "commit": {
     "author": {
       "name": "Shane",
       "email": "6071159+smashedr@users.noreply.github.com",
-      "date": "2025-03-22T22:45:32Z"
+      "date": "2025-11-27T04:10:02Z"
     },
     "committer": {
       "name": "Shane",
       "email": "6071159+smashedr@users.noreply.github.com",
-      "date": "2025-03-22T22:45:32Z"
+      "date": "2025-11-27T04:10:02Z"
     },
-    "message": "Updates",
+    "message": "Test Commit",
     "tree": {
-      "sha": "533436a6c0359dd3743da72acc30366d5d50fbc2",
-      "url": "https://api.github.com/repos/cssnr/get-commit-action/git/trees/533436a6c0359dd3743da72acc30366d5d50fbc2"
+      "sha": "27923b4044f4753a4ba45aea8d06a3e62b837527",
+      "url": "https://api.github.com/repos/cssnr/get-commit-action/git/trees/27923b4044f4753a4ba45aea8d06a3e62b837527"
     },
-    "url": "https://api.github.com/repos/cssnr/get-commit-action/git/commits/d6b030c28fb4e55c233b83323ffd1b41cf47241a",
+    "url": "https://api.github.com/repos/cssnr/get-commit-action/git/commits/4216ad54c491ec42df1f17c61acade1f74a59b98",
     "comment_count": 0,
     "verification": {
       "verified": true,
       "reason": "valid",
-      "signature": "-----BEGIN PGP SIGNATURE-----\n\niHUEABYKAB0WIQRXgKNZZbHv52xw4573HsvCBq6NtQUCZ989jAAKCRD3HsvCBq6N\ntc2QAP4xDEyh1mPoDbry+AagGQgYQzQU9pN+Q9A1nLNptiLR8gD/c5fEHeDBOIJo\nNqZCh4BACo3KFF3sXysTdqr3zWIOqwI=\n=0MJn\n-----END PGP SIGNATURE-----",
-      "payload": "tree 533436a6c0359dd3743da72acc30366d5d50fbc2\nparent 49ed46652824d2fa19f75ae0cb9b56b8a6563a40\nauthor Shane <6071159+smashedr@users.noreply.github.com> 1742683532 -0700\ncommitter Shane <6071159+smashedr@users.noreply.github.com> 1742683532 -0700\n\nUpdates\n",
-      "verified_at": "2025-03-22T22:45:07Z"
+      "signature": "-----BEGIN PGP SIGNATURE-----\n\niHUEABYKAB0WIQRXgKNZZbHv52xw4573HsvCBq6NtQUCaSfPGgAKCRD3HsvCBq6N\ntUN6AQDSP+hCmNblfPFQ/qPWb0oo3v40lx9Y+YluoDYkddYK3QEArrn1uphOfEkQ\nwYMGc7BujGOWxAQ/UmWK9f71dJtL6gA=\n=QU/D\n-----END PGP SIGNATURE-----",
+      "payload": "tree 27923b4044f4753a4ba45aea8d06a3e62b837527\nparent 80d6851d422a0a584c7dda8544efa931f47f76d4\nauthor Shane <6071159+smashedr@users.noreply.github.com> 1764216602 -0800\ncommitter Shane <6071159+smashedr@users.noreply.github.com> 1764216602 -0800\n\nTest Commit\n",
+      "verified_at": "2025-11-27T04:09:30Z"
     }
   },
-  "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-  "html_url": "https://github.com/cssnr/get-commit-action/commit/d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-  "comments_url": "https://api.github.com/repos/cssnr/get-commit-action/commits/d6b030c28fb4e55c233b83323ffd1b41cf47241a/comments",
+  "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/4216ad54c491ec42df1f17c61acade1f74a59b98",
+  "html_url": "https://github.com/cssnr/get-commit-action/commit/4216ad54c491ec42df1f17c61acade1f74a59b98",
+  "comments_url": "https://api.github.com/repos/cssnr/get-commit-action/commits/4216ad54c491ec42df1f17c61acade1f74a59b98/comments",
   "author": {
     "login": "smashedr",
     "id": 6071159,
@@ -298,34 +306,24 @@ See the [Examples](#Examples) for more.
   },
   "parents": [
     {
-      "sha": "49ed46652824d2fa19f75ae0cb9b56b8a6563a40",
-      "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/49ed46652824d2fa19f75ae0cb9b56b8a6563a40",
-      "html_url": "https://github.com/cssnr/get-commit-action/commit/49ed46652824d2fa19f75ae0cb9b56b8a6563a40"
+      "sha": "80d6851d422a0a584c7dda8544efa931f47f76d4",
+      "url": "https://api.github.com/repos/cssnr/get-commit-action/commits/80d6851d422a0a584c7dda8544efa931f47f76d4",
+      "html_url": "https://github.com/cssnr/get-commit-action/commit/80d6851d422a0a584c7dda8544efa931f47f76d4"
     }
   ],
   "stats": {
-    "total": 2,
-    "additions": 1,
+    "total": 1,
+    "additions": 0,
     "deletions": 1
-  },
-  "files": [
-    {
-      "sha": "b095106eaeb1d8cd5cf78be67576080783600386",
-      "filename": ".github/workflows/test.yaml",
-      "status": "modified",
-      "additions": 1,
-      "deletions": 1,
-      "changes": 2,
-      "blob_url": "https://github.com/cssnr/get-commit-action/blob/d6b030c28fb4e55c233b83323ffd1b41cf47241a/.github%2Fworkflows%2Ftest.yaml",
-      "raw_url": "https://github.com/cssnr/get-commit-action/raw/d6b030c28fb4e55c233b83323ffd1b41cf47241a/.github%2Fworkflows%2Ftest.yaml",
-      "contents_url": "https://api.github.com/repos/cssnr/get-commit-action/contents/.github%2Fworkflows%2Ftest.yaml?ref=d6b030c28fb4e55c233b83323ffd1b41cf47241a",
-      "patch": "@@ -39,7 +39,7 @@ jobs:\n           #sha: dd49c0cc254760111a78f2c739efcedd567e2bf2\n \n       - name: \"1: Verify Non-Pull\"\n-        if: ${{ !github.event.act }}\n+        if: ${{ github.event_name != 'pull_request' }}\n         env:\n           COMMIT: ${{ steps.test.outputs.commit }}\n           RESULT: ${{ steps.test.outputs.result }}"
-    }
-  ]
+  }
 }
 ```
 
 </details>
+
+#### result
+
+This is the parsed result from the provided input [path](#path).
 
 ```yaml
 - name: 'Get Commit Action'
@@ -334,15 +332,17 @@ See the [Examples](#Examples) for more.
 
 - name: 'Echo Output'
   env:
-    COMMIT: ${{ steps.commit.outputs.commit }}
-    RESULT: ${{ steps.commit.outputs.result }}
+    result: ${{ steps.commit.outputs.result }}
   run: |
     echo "sha: ${{ steps.commit.outputs.sha }}"
-    echo "commit: ${COMMIT}"
-    echo "result: ${RESULT}"
+    echo "commit: ${{ steps.commit.outputs.commit }}"
+    echo "result: ${result}"
+    echo "message: ${{ steps.commit.outputs.message }}"
+    echo "comment_count: ${{ steps.commit.outputs.comment_count }}"
+    echo "author: ${{ steps.commit.outputs.author }}"
 ```
 
-Note: due to the way `${{}}` expressions are evaluated, multi-line output gets executed in a run block.
+Note: multi-line outputs in a run block using `${{}}` are evaluated; therefore, is set as an env.
 
 ## Examples
 
@@ -354,18 +354,29 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
 - name: 'Get Commit Action'
   id: commit
   uses: cssnr/get-commit-action@master
-  with:
-    selector: 'commit.message'
 
 - name: 'Echo Output'
-  env:
-    RESULT: ${{ steps.commit.outputs.result }}
   run: |
-    echo "commit.message: ${RESULT}"
+    echo "message: ${{ steps.commit.outputs.message }}"
 ```
 
 </details>
-<details open><summary>Get The head Commit Message for a PR</summary>
+<details open><summary>Use the commit JSON</summary>
+
+```yaml
+- name: 'Get Commit Action'
+  id: commit
+  uses: cssnr/get-commit-action@master
+
+- name: 'Echo Output'
+  run: |
+    echo "stats.total: ${{ fromJSON(steps.commit.outputs.result).stats.total }}"
+    echo "stats.additions: ${{ fromJSON(steps.commit.outputs.result).stats.additions }}"
+    echo "stats.deletions: ${{ fromJSON(steps.commit.outputs.result).stats.deletions }}"
+```
+
+</details>
+<details open><summary>Get The Path Selector</summary>
 
 ```yaml
 - name: 'Get Commit Action'
@@ -373,31 +384,11 @@ Note: due to the way `${{}}` expressions are evaluated, multi-line output gets e
   id: commit
   uses: cssnr/get-commit-action@master
   with:
-    sha: ${{ github.event.pull_request.head.sha }}
-    selector: 'commit.message'
-
-- name: 'Echo Output'
-  env:
-    RESULT: ${{ steps.commit.outputs.result }}
-  run: |
-    echo "commit.message: ${RESULT}"
-```
-
-</details>
-<details><summary>Get The Author's Login</summary>
-
-```yaml
-- name: 'Get Commit Action'
-  if: ${{ github.event_name == 'pull_request' }}
-  id: commit
-  uses: cssnr/get-commit-action@master
-  with:
-    sha: ${{ github.event.pull_request.head.sha }}
-    selector: 'author.login'
+    selector: 'author.avatar_url'
 
 - name: 'Echo Output'
   run: |
-    echo "author.login: ${{ steps.commit.outputs.result }}"
+    echo "avatar_url: ${{ steps.commit.outputs.result }}"
 ```
 
 </details>
