@@ -33343,6 +33343,8 @@ async function main() {
     coreExports.startGroup('Commit');
     console.log(commit);
     coreExports.endGroup();
+    console.log('core.getInput(path):', coreExports.getInput('path'));
+    console.log('inputs.selector:', inputs.selector);
     const result = inputs.selector ? parseJSONPath(inputs.selector, commit) : '';
     coreExports.info(`➡️ Parsed result: \u001b[36;1m${result}`);
     coreExports.info(`    type: \u001b[33;1m${typeof result}`);

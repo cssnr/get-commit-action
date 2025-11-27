@@ -58,6 +58,8 @@ async function main() {
     // console.log(commitOnly)
 
     // Path
+    console.log('core.getInput(path):', core.getInput('path'))
+    console.log('inputs.selector:', inputs.selector)
     const result = inputs.selector ? parseJSONPath(inputs.selector, commit) : ''
     core.info(`➡️ Parsed result: \u001b[36;1m${result}`)
     core.info(`    type: \u001b[33;1m${typeof result}`)
