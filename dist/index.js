@@ -33391,7 +33391,7 @@ async function addSummary(inputs, sha, commit, result) {
     coreExports.summary.addRaw('\n\nNote: `files` key removed to improve rendering. Full output is available in the job logs.\n\n');
     coreExports.summary.addCodeBlock(JSON.stringify(commit, null, 2), 'json');
     coreExports.summary.addRaw('</details>\n');
-    const { token, ...cleanInputs } = inputs;
+    const cleanInputs = Object.fromEntries(Object.entries(inputs).filter(([key]) => key !== 'token'));
     const yaml = Object.entries(cleanInputs)
         .map(([k, v]) => `${k}: ${JSON.stringify(v)}`)
         .join('\n');
