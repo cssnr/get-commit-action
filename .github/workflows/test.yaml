@@ -60,26 +60,14 @@ jobs:
           #path: "commit.message"
           #sha: ${{ github.event.pull_request.head.sha }}
 
-      #- name: "Verify"
-      #  env:
-      #    COMMIT: ${{ steps.test.outputs.commit || steps.pull.outputs.commit }}
-      #    RESULT: ${{ steps.test.outputs.result || steps.pull.outputs.result }}
-      #  run: |
-      #    echo "sha: '${{ steps.test.outputs.sha || steps.pull.outputs.sha }}'"
-      #    if [ -z '${{ steps.test.outputs.sha || steps.pull.outputs.sha }}' ];then
-      #      echo "No Output: sha"
-      #      exit 1
-      #    fi
-      #    echo "commit: ${COMMIT}"
-      #    if [ -z "${COMMIT}" ];then
-      #      echo "No Output: commit"
-      #      exit 1
-      #    fi
-      #    echo "result: ${RESULT}"
-      #    if [ -z "${RESULT}" ];then
-      #      echo "No Output: result"
-      #      exit 1
-      #    fi
+      - name: "Validate Outputs"
+        uses: cssnr/validate-outputs-action@master
+        with:
+          outputs: ${{ toJSON(steps.pull.outputs) }}
+          data: |
+            sha: ${{ github.event.pull_request.head.sha }}
+            result:
+            commit:
 
       - name: "Schedule Failure Notification"
         if: ${{ failure() && github.event_name == 'schedule' }}
