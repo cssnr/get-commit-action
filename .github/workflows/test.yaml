@@ -61,7 +61,7 @@ jobs:
         uses: ./
         with:
           summary: false
-          #path: "commit.message"
+          path: "author.type"
           #sha: ${{ github.event.pull_request.head.sha }}
 
       - name: "2 - Validate Outputs"
@@ -71,7 +71,8 @@ jobs:
           outputs: ${{ toJSON(steps.test2.outputs) }}
           data: |
             sha: ${{ github.event.pull_request.head.sha }}
-            result:
+            result: User
+            message:
             commit:
 
       - name: "Schedule Failure Notification"
